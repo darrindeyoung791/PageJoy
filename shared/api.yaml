@@ -1,0 +1,197 @@
+# PageJoy API
+
+This is the API specification for the PageJoy application.
+
+## Version: 1.0
+
+## 基础路径
+/api/v1
+
+## 安全方案
+APIKey:
+  type: apiKey
+  name: Authorization
+  in: header
+
+## 通用错误响应
+
+### 400 Bad Request
+```json
+{
+  "error": "Bad Request",
+  "message": "请求参数错误"
+}
+```
+
+### 401 Unauthorized
+```json
+{
+  "error": "Unauthorized",
+  "message": "未授权访问"
+}
+```
+
+### 404 Not Found
+```json
+{
+  "error": "Not Found",
+  "message": "请求的资源不存在"
+}
+```
+
+### 500 Internal Server Error
+```json
+{
+  "error": "Internal Server Error",
+  "message": "服务器内部错误"
+}
+```
+
+## 路径
+
+### 用户相关
+
+#### 用户注册
+POST /users/register
+- 请求体:
+```json
+{
+  "username": "string",
+  "password": "string",
+  "email": "string"
+}
+```
+- 响应:
+  - 201: 用户注册成功
+  - 400: 请求参数错误
+
+#### 用户登录
+POST /users/login
+- 请求体:
+```json
+{
+  "username": "string",
+  "password": "string"
+}
+```
+- 响应:
+  - 200: 登录成功，返回token
+  - 401: 用户名或密码错误
+
+#### 获取用户信息
+GET /users/me
+- 响应:
+  - 200: 用户信息
+  - 401: 未授权
+
+### 文章相关
+
+#### 获取文章列表
+GET /articles
+- 查询参数:
+  - page: 页码 (默认1)
+  - size: 每页数量 (默认10)
+- 响应:
+  - 200: 文章列表
+
+#### 获取文章详情
+GET /articles/{id}
+- 路径参数:
+  - id: 文章ID
+- 响应:
+  - 200: 文章详情
+  - 404: 文章不存在
+
+#### 点赞文章
+POST /articles/{id}/like
+- 路径参数:
+  - id: 文章ID
+- 响应:
+  - 200: 点赞成功
+  - 401: 未授权
+  - 404: 文章不存在
+
+### 创作者相关
+
+#### 获取创作者信息
+GET /creators/{id}
+- 路径参数:
+  - id: 创作者ID
+- 响应:
+  - 200: 创作者信息
+  - 404: 创作者不存在
+
+#### 关注创作者
+POST /creators/{id}/follow
+- 路径参数:
+  - id: 创作者ID
+- 响应:
+  - 200: 关注成功
+  - 401: 未授权
+  - 404: 创作者不存在
+
+### 杂志相关
+
+#### 获取杂志列表
+GET /magazines
+- 查询参数:
+  - page: 页码 (默认1)
+  - size: 每页数量 (默认10)
+- 响应:
+  - 200: 杂志列表
+
+#### 获取杂志详情
+GET /magazines/{id}
+- 路径参数:
+  - id: 杂志ID
+- 响应:
+  - 200: 杂志详情
+  - 404: 杂志不存在
+
+### 会员订阅相关
+
+#### 获取订阅信息
+GET /subscription
+- 响应:
+  - 200: 订阅信息
+  - 401: 未授权
+
+#### 处理支付Webhook
+POST /subscription/webhook
+- 请求体: 支付平台的webhook数据
+- 响应:
+  - 200: 处理成功
+  - 400: 数据格式错误
+
+### 收藏相关
+
+#### 获取收藏列表
+GET /favorites
+- 查询参数:
+  - page: 页码 (默认1)
+  - size: 每页数量 (默认10)
+- 响应:
+  - 200: 收藏列表
+  - 401: 未授权
+
+#### 添加收藏
+POST /favorites
+- 请求体:
+```json
+{
+  "article_id": "integer"
+}
+```
+- 响应:
+  - 200: 添加成功
+  - 401: 未授权
+  - 404: 文章不存在
+
+#### 移除收藏
+DELETE /favorites/{id}
+- 路径参数:
+  - id: 收藏ID
+- 响应:
+  - 200: 移除成功
+  - 401: 未授权
+  - 404: 收藏不存在
