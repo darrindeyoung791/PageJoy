@@ -80,12 +80,6 @@ class _HomeScreenState extends State<HomeScreen> {
           )
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // TODO: Implement FAB functionality
-        },
-        child: const Icon(Icons.add),
-      ),
     );
   }
 
@@ -127,12 +121,6 @@ class _HomeScreenState extends State<HomeScreen> {
             label: 'Profile',
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // TODO: Implement FAB functionality
-        },
-        child: const Icon(Icons.add),
       ),
     );
   }
