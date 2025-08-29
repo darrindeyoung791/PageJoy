@@ -34,50 +34,89 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildNavigationRail() {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('PageJoy'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {
-              // TODO: Implement search functionality
-            },
-          ),
-        ],
-      ),
       body: Row(
         children: [
-          NavigationRail(
-            selectedIndex: _currentIndex,
-            onDestinationSelected: (int index) {
-              setState(() {
-                _currentIndex = index;
-              });
-            },
-            labelType: NavigationRailLabelType.selected,
-            destinations: const [
-              NavigationRailDestination(
-                icon: Icon(Icons.home_outlined),
-                selectedIcon: Icon(Icons.home),
-                label: Text('Home'),
+          // Navigation rail with PageJoy title
+          Container(
+            width: 250,
+            decoration: const BoxDecoration(
+              border: Border(
+                right: BorderSide(
+                  color: Colors.grey,
+                  width: 0.5,
+                ),
               ),
-              NavigationRailDestination(
-                icon: Icon(Icons.favorite_border),
-                selectedIcon: Icon(Icons.favorite),
-                label: Text('Favorites'),
-              ),
-              NavigationRailDestination(
-                icon: Icon(Icons.person_outline),
-                selectedIcon: Icon(Icons.person),
-                label: Text('Profile'),
-              ),
-            ],
+            ),
+            child: Column(
+              children: [
+                // PageJoy title in navigation rail
+                Container(
+                  padding: const EdgeInsets.all(16.0),
+                  alignment: Alignment.centerLeft,
+                  child: const Text(
+                    'PageJoy',
+                    style: TextStyle(
+                      fontSize: 24, // 增大标题字体
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const Divider(height: 1),
+                // Navigation rail
+                Expanded(
+                  child: NavigationRail(
+                    selectedIndex: _currentIndex,
+                    onDestinationSelected: (int index) {
+                      setState(() {
+                        _currentIndex = index;
+                      });
+                    },
+                    labelType: NavigationRailLabelType.all, // 始终显示标签
+                    destinations: const [
+                      NavigationRailDestination(
+                        icon: Icon(Icons.home_outlined),
+                        selectedIcon: Icon(Icons.home),
+                        label: Text('Home'),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.favorite_border),
+                        selectedIcon: Icon(Icons.favorite),
+                        label: Text('Favorites'),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.person_outline),
+                        selectedIcon: Icon(Icons.person),
+                        label: Text('Profile'),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
-          const VerticalDivider(thickness: 1, width: 1),
-          // This is the main content.
+          // Main content
           Expanded(
-            child: _buildBody(),
-          )
+            child: Column(
+              children: [
+                // AppBar for search functionality
+                AppBar(
+                  title: const Text('PageJoy'),
+                  actions: [
+                    IconButton(
+                      icon: const Icon(Icons.search),
+                      onPressed: () {
+                        // TODO: Implement search functionality
+                      },
+                    ),
+                  ],
+                ),
+                // Content
+                Expanded(
+                  child: _buildBody(),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -86,7 +125,13 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildBottomNavigation() {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('PageJoy'),
+        title: const Text(
+          'PageJoy',
+          style: TextStyle(
+            fontSize: 24, // 增大标题字体
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
