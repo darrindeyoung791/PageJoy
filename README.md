@@ -36,6 +36,61 @@
     - [Planned]购买套餐和历史订单
 
 
+## 开发环境设置
+
+### 后端 (Python/FastAPI)
+
+1. 进入 `backend` 目录:
+   ```bash
+   cd backend
+   ```
+
+2. 创建虚拟环境:
+   ```bash
+   python -m venv venv
+   ```
+
+3. 激活虚拟环境:
+   - Windows: `venv\Scripts\activate`
+   - macOS/Linux: `source venv/bin/activate`
+
+4. 安装依赖:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+5. 运行开发服务器:
+   ```bash
+   uvicorn main:app --reload
+   ```
+
+### 前端 (Flutter)
+
+1. 进入 `app` 目录:
+   ```bash
+   cd app
+   ```
+
+2. 获取依赖:
+   ```bash
+   flutter pub get
+   ```
+
+3. 运行应用:
+   ```bash
+   flutter run
+   ```
+
+### 启动整个开发环境
+
+在项目根目录运行:
+```bash
+start_dev.bat
+```
+
+这将同时启动后端和前端开发服务器。
+
+
 ## 数据库表结构汇总
 
 - 使用 sqlite 存放数据
