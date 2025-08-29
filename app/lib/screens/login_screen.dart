@@ -1,1 +1,90 @@
-import 'package:flutter/material.dart';\n\nclass LoginScreen extends StatefulWidget {\n  const LoginScreen({super.key});\n\n  @override\n  State<LoginScreen> createState() => _LoginScreenState();\n}\n\nclass _LoginScreenState extends State<LoginScreen> {\n  final _formKey = GlobalKey<FormState>();\n  final _usernameController = TextEditingController();\n  final _passwordController = TextEditingController();\n\n  @override\n  void dispose() {\n    _usernameController.dispose();\n    _passwordController.dispose();\n    super.dispose();\n  }\n\n  void _login() {\n    if (_formKey.currentState!.validate()) {\n      // TODO: Implement login logic\n      ScaffoldMessenger.of(context).showSnackBar(\n        const SnackBar(content: Text('Processing Login')),\n      );\n    }\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(\n        title: const Text('Login'),\n      ),\n      body: Padding(\n        padding: const EdgeInsets.all(16.0),\n        child: Form(\n          key: _formKey,\n          child: Column(\n            mainAxisAlignment: MainAxisAlignment.center,\n            children: [\n              TextFormField(\n                controller: _usernameController,\n                decoration: const InputDecoration(\n                  labelText: 'Username',\n                  border: OutlineInputBorder(),\n                ),\n                validator: (value) {\n                  if (value == null || value.isEmpty) {\n                    return 'Please enter your username';\n                  }\n                  return null;\n                },\n              ),\n              const SizedBox(height: 16),\n              TextFormField(\n                controller: _passwordController,\n                decoration: const InputDecoration(\n                  labelText: 'Password',\n                  border: OutlineInputBorder(),\n                ),\n                obscureText: true,\n                validator: (value) {\n                  if (value == null || value.isEmpty) {\n                    return 'Please enter your password';\n                  }\n                  return null;\n                },\n              ),\n              const SizedBox(height: 24),\n              ElevatedButton(\n                onPressed: _login,\n                child: const Text('Login'),\n              ),\n              const SizedBox(height: 16),\n              TextButton(\n                onPressed: () {\n                  Navigator.pushNamed(context, '/register');\n                },\n                child: const Text('Don\\'t have an account? Register'),\n              ),\n            ],\n          ),\n        ),\n      ),\n    );\n  }\n}
+import 'package:flutter/material.dart';
+
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  void _login() {
+    if (_formKey.currentState!.validate()) {
+      // TODO: Implement login logic
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Processing Login')),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Login'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextFormField(
+                controller: _usernameController,
+                decoration: const InputDecoration(
+                  labelText: 'Username',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your username';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _passwordController,
+                decoration: const InputDecoration(
+                  labelText: 'Password',
+                  border: OutlineInputBorder(),
+                ),
+                obscureText: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your password';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: _login,
+                child: const Text('Login'),
+              ),
+              const SizedBox(height: 16),
+              TextButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/register');
+                },
+                child: const Text('Don\'t have an account? Register'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

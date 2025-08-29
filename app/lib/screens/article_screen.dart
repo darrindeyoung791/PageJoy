@@ -8,8 +8,6 @@ class ArticleScreen extends StatefulWidget {
 }
 
 class _ArticleScreenState extends State<ArticleScreen> {
-  bool _isSummaryExpanded = false;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

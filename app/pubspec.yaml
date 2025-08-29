@@ -79,17 +79,17 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  fonts:
-    - family: NotoSansSC
-      fonts:
-        - asset: fonts/NotoSansSC-Regular.ttf
-        - asset: fonts/NotoSansSC-Bold.ttf
-          weight: 700
-    - family: Lato
-      fonts:
-        - asset: fonts/Lato-Regular.ttf
-        - asset: fonts/Lato-Bold.ttf
-          weight: 700
+  # fonts:
+  #   - family: NotoSansSC
+  #     fonts:
+  #       - asset: fonts/NotoSansSC-Regular.ttf
+  #       - asset: fonts/NotoSansSC-Bold.ttf
+  #         weight: 700
+  #   - family: Lato
+  #     fonts:
+  #       - asset: fonts/Lato-Regular.ttf
+  #       - asset: fonts/Lato-Bold.ttf
+  #         weight: 700
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
