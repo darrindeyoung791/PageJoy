@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import '../models/article.dart';
 import '../services/article_service.dart';
 
@@ -106,29 +105,43 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildBottomNavigation() {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'PageJoy',
-          style: TextStyle(
-            fontSize: 24, // 增大标题字体
-            fontWeight: FontWeight.bold,
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 120, // 展开时的高度
+            floating: true,     // 允许向下滚动时重新显示
+            pinned: false,      // 完全隐藏
+            snap: true,         // 自动展开/折叠
+            flexibleSpace: FlexibleSpaceBar(
+              expandedTitleScale: 1.5, // 展开时标题放大倍数
+              title: const Text(
+                'PageJoy',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              titlePadding: const EdgeInsets.only(left: 16, bottom: 16), // 展开时的标题位置
+            ),
+            actions: [
+              IconButton(
+                icon: Icon(_isOffline ? Icons.wifi_off : Icons.wifi),
+                onPressed: _toggleOfflineMode,
+                tooltip: _isOffline ? 'Offline Mode' : 'Online Mode',
+              ),
+              IconButton(
+                icon: const Icon(Icons.search),
+                onPressed: () {
+                  // TODO: Implement search functionality
+                },
+              ),
+            ],
           ),
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(_isOffline ? Icons.wifi_off : Icons.wifi),
-            onPressed: _toggleOfflineMode,
-            tooltip: _isOffline ? 'Offline Mode' : 'Online Mode',
-          ),
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {
-              // TODO: Implement search functionality
-            },
+          // 将主体内容转换为 Sliver
+          SliverToBoxAdapter(
+            child: _buildBody(),
           ),
         ],
       ),
-      body: _buildBody(),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentIndex,
         onDestinationSelected: (int index) {
@@ -241,47 +254,47 @@ class _ArticleFeedState extends State<ArticleFeed> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
-          // Handle error state (including offline mode)
           return _buildErrorContent();
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return const Center(child: Text('No articles found'));
         } else {
           final articles = snapshot.data!;
-          return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Show offline indicator if in offline mode
-                if (widget.isOffline)
-                  Container(
-                    margin: const EdgeInsets.all(16.0),
-                    padding: const EdgeInsets.all(12.0),
-                    decoration: BoxDecoration(
-                      color: Colors.orange.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(8.0),
-                      border: Border.all(color: Colors.orange),
-                    ),
-                    child: const Row(
-                      children: [
-                        Icon(Icons.wifi_off, color: Colors.orange),
-                        SizedBox(width: 8),
-                        Text(
-                          'Offline mode - showing sample content',
-                          style: TextStyle(
-                            color: Colors.orange,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Show offline indicator if in offline mode
+              if (widget.isOffline)
+                Container(
+                  margin: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(12.0),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(8.0),
+                    border: Border.all(color: Colors.orange),
                   ),
-                // Headline carousel (first 3 articles)
-                if (articles.length >= 3)
-                  HeadlineCarousel(articles: articles.take(3).toList()),
-                // Article list (remaining articles)
-                ArticleList(articles: articles.length > 3 ? articles.sublist(3) : []),
-              ],
-            ),
+                  child: const Row(
+                    children: [
+                      Icon(Icons.wifi_off, color: Colors.orange),
+                      SizedBox(width: 8),
+                      Text(
+                        'Offline mode - showing sample content',
+                        style: TextStyle(
+                          color: Colors.orange,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              // Headline carousel (first 3 articles)
+              if (articles.length >= 3)
+                HeadlineCarousel(articles: articles.take(3).toList()),
+              Expanded(
+                child: ArticleList(
+                  articles: articles.length > 3 ? articles.sublist(3) : [],
+                ),
+              ),
+            ],
           );
         }
       },
@@ -438,7 +451,7 @@ class _HeadlineCarouselState extends State<HeadlineCarousel> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'By Creator • ${article.createdAt.day}/${article.createdAt.month}/${article.createdAt.year}', // In a real app, this would be the actual creator
+                          'By Creator • ${article.createdAt.day}/${article.createdAt.month}/${article.createdAt.year}',
                           style: const TextStyle(
                             color: Colors.white70,
                             fontSize: 14,
@@ -465,7 +478,7 @@ class _HeadlineCarouselState extends State<HeadlineCarousel> {
                   margin: const EdgeInsets.symmetric(horizontal: 4),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: _currentPage == index ? Colors.white : Colors.white.withOpacity(0.5),
+                    color: _currentPage == index ? Colors.white : Colors.white.withValues(alpha: 0.5),
                   ),
                 );
               }),
@@ -486,24 +499,34 @@ class ArticleList extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Check if we're in landscape mode
-        final isLandscape = constraints.maxWidth > constraints.maxHeight;
-        // Calculate cross axis count based on screen width
-        final crossAxisCount = isLandscape ? 2 : 1;
+        // 根据屏幕宽度决定显示列数
+        final crossAxisCount = constraints.maxWidth > 600 ? 2 : 1;
         
-        return GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: crossAxisCount,
-            childAspectRatio: isLandscape ? 3 : 4,
-            crossAxisSpacing: 8,
-            mainAxisSpacing: 8,
-          ),
+        return ListView.builder(
+          // 改用 ListView 而不是 GridView 以获得更好的滚动效果
           padding: const EdgeInsets.all(16.0),
-          itemCount: articles.length,
+          itemCount: (articles.length / crossAxisCount).ceil(),
           itemBuilder: (context, index) {
-            return ArticleCard(article: articles[index]);
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: ArticleCard(
+                    article: articles[index * crossAxisCount],
+                  ),
+                ),
+                if (crossAxisCount == 2 && 
+                    index * 2 + 1 < articles.length)
+                  const SizedBox(width: 12),
+                if (crossAxisCount == 2 && 
+                    index * 2 + 1 < articles.length)
+                  Expanded(
+                    child: ArticleCard(
+                      article: articles[index * crossAxisCount + 1],
+                    ),
+                  ),
+              ],
+            );
           },
         );
       },
@@ -520,73 +543,89 @@ class ArticleCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Thumbnail with 1:1 aspect ratio
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: AspectRatio(
-                aspectRatio: 1.0,
-                child: Image.network(
-                  'https://via.placeholder.com/100x100',
-                  fit: BoxFit.cover,
+      child: SizedBox(
+        height: 124, // 调整为图片高度(100) + 上下内边距(12 * 2)
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center, // 修改为居中对齐
+            children: [
+              // Thumbnail
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: SizedBox(
+                  width: 100,
+                  height: 100,
+                  child: Image.network(
+                    'https://via.placeholder.com/100x100',
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(width: 12),
-            // Content
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Title with ellipsis for long text
-                  Text(
-                    article.title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
+              const SizedBox(width: 12),
+              // Content
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center, // 修改为居中对齐
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Title
+                    Text(
+                      article.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        height: 1.2,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  // Content preview with ellipsis for long text (up to 2 lines)
-                  Text(
-                    article.content,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  // Creator chip
-                  Wrap(
-                    spacing: 4,
-                    runSpacing: 4,
-                    children: [
-                      FilterChip(
-                        label: const Text(
-                          'Creator',
-                          style: TextStyle(
-                            fontSize: 12,
+                    const SizedBox(height: 4),
+                    // Creator chip inline with content
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start, // 确保文本对齐
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Text(
+                            'Creator',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey,
+                            ),
                           ),
                         ),
-                        onSelected: (selected) {
-                          // TODO: Implement creator selection
-                        },
-                      ),
-                    ],
-                  ),
-                ],
+                        const Text(
+                          ' • ',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14,
+                          ),
+                        ),
+                        // Content preview on the same line
+                        Expanded(
+                          child: Text(
+                            article.content,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                              height: 1.2,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
