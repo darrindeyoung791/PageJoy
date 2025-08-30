@@ -12,6 +12,14 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
+  bool _isOffline = false;
+
+  void _toggleOfflineMode() {
+    setState(() {
+      _isOffline = !_isOffline;
+      ArticleService.setOfflineMode(_isOffline);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,63 +44,32 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: Row(
         children: [
-          // Navigation rail with PageJoy title
-          Container(
-            width: 250,
-            decoration: const BoxDecoration(
-              border: Border(
-                right: BorderSide(
-                  color: Colors.grey,
-                  width: 0.5,
-                ),
+          // Navigation rail without PageJoy title
+          NavigationRail(
+            selectedIndex: _currentIndex,
+            onDestinationSelected: (int index) {
+              setState(() {
+                _currentIndex = index;
+              });
+            },
+            labelType: NavigationRailLabelType.all, // 始终显示标签
+            destinations: const [
+              NavigationRailDestination(
+                icon: Icon(Icons.home_outlined),
+                selectedIcon: Icon(Icons.home),
+                label: Text('Home'),
               ),
-            ),
-            child: Column(
-              children: [
-                // PageJoy title in navigation rail
-                Container(
-                  padding: const EdgeInsets.all(16.0),
-                  alignment: Alignment.centerLeft,
-                  child: const Text(
-                    'PageJoy',
-                    style: TextStyle(
-                      fontSize: 24, // 增大标题字体
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const Divider(height: 1),
-                // Navigation rail
-                Expanded(
-                  child: NavigationRail(
-                    selectedIndex: _currentIndex,
-                    onDestinationSelected: (int index) {
-                      setState(() {
-                        _currentIndex = index;
-                      });
-                    },
-                    labelType: NavigationRailLabelType.all, // 始终显示标签
-                    destinations: const [
-                      NavigationRailDestination(
-                        icon: Icon(Icons.home_outlined),
-                        selectedIcon: Icon(Icons.home),
-                        label: Text('Home'),
-                      ),
-                      NavigationRailDestination(
-                        icon: Icon(Icons.favorite_border),
-                        selectedIcon: Icon(Icons.favorite),
-                        label: Text('Favorites'),
-                      ),
-                      NavigationRailDestination(
-                        icon: Icon(Icons.person_outline),
-                        selectedIcon: Icon(Icons.person),
-                        label: Text('Profile'),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+              NavigationRailDestination(
+                icon: Icon(Icons.favorite_border),
+                selectedIcon: Icon(Icons.favorite),
+                label: Text('Favorites'),
+              ),
+              NavigationRailDestination(
+                icon: Icon(Icons.person_outline),
+                selectedIcon: Icon(Icons.person),
+                label: Text('Profile'),
+              ),
+            ],
           ),
           // Main content
           Expanded(
@@ -102,6 +79,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 AppBar(
                   title: const Text('PageJoy'),
                   actions: [
+                    IconButton(
+                      icon: Icon(_isOffline ? Icons.wifi_off : Icons.wifi),
+                      onPressed: _toggleOfflineMode,
+                      tooltip: _isOffline ? 'Offline Mode' : 'Online Mode',
+                    ),
                     IconButton(
                       icon: const Icon(Icons.search),
                       onPressed: () {
@@ -133,6 +115,11 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         actions: [
+          IconButton(
+            icon: Icon(_isOffline ? Icons.wifi_off : Icons.wifi),
+            onPressed: _toggleOfflineMode,
+            tooltip: _isOffline ? 'Offline Mode' : 'Online Mode',
+          ),
           IconButton(
             icon: const Icon(Icons.search),
             onPressed: () {
@@ -173,23 +160,25 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildBody() {
     switch (_currentIndex) {
       case 0:
-        return const _HomeFeed();
+        return _HomeFeed(isOffline: _isOffline);
       case 1:
         return const _FavoritesScreen();
       case 2:
         return const _ProfileScreen();
       default:
-        return const _HomeFeed();
+        return _HomeFeed(isOffline: _isOffline);
     }
   }
 }
 
 class _HomeFeed extends StatelessWidget {
-  const _HomeFeed();
+  final bool isOffline;
+
+  const _HomeFeed({this.isOffline = false});
 
   @override
   Widget build(BuildContext context) {
-    return const ArticleFeed();
+    return ArticleFeed(isOffline: isOffline);
   }
 }
 
@@ -216,7 +205,9 @@ class _ProfileScreen extends StatelessWidget {
 }
 
 class ArticleFeed extends StatefulWidget {
-  const ArticleFeed({super.key});
+  final bool isOffline;
+
+  const ArticleFeed({super.key, this.isOffline = false});
 
   @override
   State<ArticleFeed> createState() => _ArticleFeedState();
@@ -232,6 +223,17 @@ class _ArticleFeedState extends State<ArticleFeed> {
   }
 
   @override
+  void didUpdateWidget(covariant ArticleFeed oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // If offline mode changes, reload articles
+    if (oldWidget.isOffline != widget.isOffline) {
+      setState(() {
+        _articlesFuture = ArticleService.getArticles();
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Article>>(
       future: _articlesFuture,
@@ -239,7 +241,8 @@ class _ArticleFeedState extends State<ArticleFeed> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
+          // Handle error state (including offline mode)
+          return _buildErrorContent();
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return const Center(child: Text('No articles found'));
         } else {
@@ -248,6 +251,30 @@ class _ArticleFeedState extends State<ArticleFeed> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Show offline indicator if in offline mode
+                if (widget.isOffline)
+                  Container(
+                    margin: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.all(12.0),
+                    decoration: BoxDecoration(
+                      color: Colors.orange.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(8.0),
+                      border: Border.all(color: Colors.orange),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.wifi_off, color: Colors.orange),
+                        SizedBox(width: 8),
+                        Text(
+                          'Offline mode - showing sample content',
+                          style: TextStyle(
+                            color: Colors.orange,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 // Headline carousel (first 3 articles)
                 if (articles.length >= 3)
                   HeadlineCarousel(articles: articles.take(3).toList()),
@@ -258,6 +285,75 @@ class _ArticleFeedState extends State<ArticleFeed> {
           );
         }
       },
+    );
+  }
+
+  Widget _buildErrorContent() {
+    // If we're in offline mode, show sample content
+    if (widget.isOffline) {
+      // Load sample articles directly
+      final sampleArticles = ArticleService.generateSampleArticles();
+      return SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Offline indicator
+            Container(
+              margin: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(12.0),
+              decoration: BoxDecoration(
+                color: Colors.orange.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(8.0),
+                border: Border.all(color: Colors.orange),
+              ),
+              child: const Row(
+                children: [
+                  Icon(Icons.wifi_off, color: Colors.orange),
+                  SizedBox(width: 8),
+                  Text(
+                    'Offline mode - showing sample content',
+                    style: TextStyle(
+                      color: Colors.orange,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Headline carousel (first 3 articles)
+            if (sampleArticles.length >= 3)
+              HeadlineCarousel(articles: sampleArticles.take(3).toList()),
+            // Article list (remaining articles)
+            ArticleList(articles: sampleArticles.length > 3 ? sampleArticles.sublist(3) : []),
+          ],
+        ),
+      );
+    }
+    
+    // For other errors, show error message
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.error, size: 48, color: Colors.red),
+          const SizedBox(height: 16),
+          const Text(
+            'Failed to load articles',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          const Text('Please check your internet connection'),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                _articlesFuture = ArticleService.getArticles();
+              });
+            },
+            child: const Text('Retry'),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -341,9 +437,9 @@ class _HeadlineCarouselState extends State<HeadlineCarousel> {
                           overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 8),
-                        const Text(
-                          'By Creator', // In a real app, this would be the actual creator
-                          style: TextStyle(
+                        Text(
+                          'By Creator • ${article.createdAt.day}/${article.createdAt.month}/${article.createdAt.year}', // In a real app, this would be the actual creator
+                          style: const TextStyle(
                             color: Colors.white70,
                             fontSize: 14,
                           ),
@@ -455,6 +551,17 @@ class ArticleCard extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  // Content preview with ellipsis for long text (up to 2 lines)
+                  Text(
+                    article.content,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey,
                     ),
                   ),
                   const SizedBox(height: 8),
