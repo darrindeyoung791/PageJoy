@@ -259,42 +259,42 @@ class _ArticleFeedState extends State<ArticleFeed> {
           return const Center(child: Text('No articles found'));
         } else {
           final articles = snapshot.data!;
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Show offline indicator if in offline mode
-              if (widget.isOffline)
-                Container(
-                  margin: const EdgeInsets.all(16.0),
-                  padding: const EdgeInsets.all(12.0),
-                  decoration: BoxDecoration(
-                    color: Colors.orange.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(8.0),
-                    border: Border.all(color: Colors.orange),
-                  ),
-                  child: const Row(
-                    children: [
-                      Icon(Icons.wifi_off, color: Colors.orange),
-                      SizedBox(width: 8),
-                      Text(
-                        'Offline mode - showing sample content',
-                        style: TextStyle(
-                          color: Colors.orange,
-                          fontWeight: FontWeight.bold,
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Show offline indicator if in offline mode
+                if (widget.isOffline)
+                  Container(
+                    margin: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.all(12.0),
+                    decoration: BoxDecoration(
+                      color: Colors.orange.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(8.0),
+                      border: Border.all(color: Colors.orange),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.wifi_off, color: Colors.orange),
+                        SizedBox(width: 8),
+                        Text(
+                          'Offline mode - showing sample content',
+                          style: TextStyle(
+                            color: Colors.orange,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              // Headline carousel (first 3 articles)
-              if (articles.length >= 3)
-                HeadlineCarousel(articles: articles.take(3).toList()),
-              Expanded(
-                child: ArticleList(
+                // Headline carousel (first 3 articles)
+                if (articles.length >= 3)
+                  HeadlineCarousel(articles: articles.take(3).toList()),
+                ArticleList(
                   articles: articles.length > 3 ? articles.sublist(3) : [],
                 ),
-              ),
-            ],
+              ],
+            ),
           );
         }
       },
@@ -315,7 +315,7 @@ class _ArticleFeedState extends State<ArticleFeed> {
               margin: const EdgeInsets.all(16.0),
               padding: const EdgeInsets.all(12.0),
               decoration: BoxDecoration(
-                color: Colors.orange.withValues(alpha: 0.2),
+                color: Colors.orange.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(8.0),
                 border: Border.all(color: Colors.orange),
               ),
@@ -429,7 +429,7 @@ class _HeadlineCarouselState extends State<HeadlineCarousel> {
                       end: Alignment.bottomCenter,
                       colors: [
                         Colors.transparent,
-                        Colors.black.withValues(alpha: 0.7),
+                        Colors.black.withOpacity(0.7),
                       ],
                     ),
                   ),
@@ -478,7 +478,7 @@ class _HeadlineCarouselState extends State<HeadlineCarousel> {
                   margin: const EdgeInsets.symmetric(horizontal: 4),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: _currentPage == index ? Colors.white : Colors.white.withValues(alpha: 0.5),
+                    color: _currentPage == index ? Colors.white : Colors.white.withOpacity(0.5),
                   ),
                 );
               }),
@@ -499,35 +499,37 @@ class ArticleList extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        // 根据屏幕宽度决定显示列数
         final crossAxisCount = constraints.maxWidth > 600 ? 2 : 1;
         
-        return ListView.builder(
-          // 改用 ListView 而不是 GridView 以获得更好的滚动效果
-          padding: const EdgeInsets.all(16.0),
-          itemCount: (articles.length / crossAxisCount).ceil(),
-          itemBuilder: (context, index) {
-            return Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: ArticleCard(
-                    article: articles[index * crossAxisCount],
-                  ),
-                ),
-                if (crossAxisCount == 2 && 
-                    index * 2 + 1 < articles.length)
-                  const SizedBox(width: 12),
-                if (crossAxisCount == 2 && 
-                    index * 2 + 1 < articles.length)
+        return Column(
+          children: List.generate(
+            (articles.length / crossAxisCount).ceil(),
+            (index) => Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 8.0,
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Expanded(
                     child: ArticleCard(
-                      article: articles[index * crossAxisCount + 1],
+                      article: articles[index * crossAxisCount],
                     ),
                   ),
-              ],
-            );
-          },
+                  if (crossAxisCount == 2 &&
+                      index * 2 + 1 < articles.length) ...[
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ArticleCard(
+                        article: articles[index * crossAxisCount + 1],
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
         );
       },
     );
