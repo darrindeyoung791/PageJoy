@@ -1,9 +1,9 @@
 from fastapi import FastAPI
-from database import engine, Base
-import models
+from . import models
+from .database import engine, SessionLocal
 from routers import users, articles, magazines, subscription_plans, user_subscriptions, payments, likes, follows
 
-# Create all tables
+# 确保在创建表之前导入了所有模型
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="PageJoy API", description="API for PageJoy application", version="0.1.0")
@@ -25,3 +25,11 @@ def read_root():
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
+
+# 依赖项函数
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()

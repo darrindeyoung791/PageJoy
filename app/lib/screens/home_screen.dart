@@ -51,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 _currentIndex = index;
               });
             },
-            labelType: NavigationRailLabelType.all, // 始终显示标签
+            labelType: NavigationRailLabelType.all,
             destinations: const [
               NavigationRailDestination(
                 icon: Icon(Icons.home_outlined),
@@ -72,11 +72,24 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           // Main content
           Expanded(
-            child: Column(
-              children: [
-                // AppBar for search functionality
-                AppBar(
-                  title: const Text('PageJoy'),
+            child: CustomScrollView(
+              slivers: [
+                SliverAppBar(
+                  expandedHeight: 120,
+                  collapsedHeight: 60,
+                  floating: true,
+                  pinned: true,
+                  snap: false,
+                  flexibleSpace: FlexibleSpaceBar(
+                    expandedTitleScale: 2,
+                    title: const Text(
+                      'PageJoy',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    titlePadding: const EdgeInsets.only(left: 16, bottom: 16),
+                  ),
                   actions: [
                     IconButton(
                       icon: Icon(_isOffline ? Icons.wifi_off : Icons.wifi),
@@ -91,8 +104,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ],
                 ),
-                // Content
-                Expanded(
+                // 将主体内容转换为 Sliver
+                SliverToBoxAdapter(
                   child: _buildBody(),
                 ),
               ],
@@ -108,12 +121,13 @@ class _HomeScreenState extends State<HomeScreen> {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            expandedHeight: 120, // 展开时的高度
-            floating: true,     // 允许向下滚动时重新显示
-            pinned: false,      // 完全隐藏
-            snap: true,         // 自动展开/折叠
+            expandedHeight: 200,  // 展开时的高度
+            collapsedHeight: 60, // 折叠高度
+            floating: true,       // 允许向下滚动时重新显示
+            pinned: true,        // 完全隐藏
+            snap: false,           // 自动展开/折叠
             flexibleSpace: FlexibleSpaceBar(
-              expandedTitleScale: 1.5, // 展开时标题放大倍数
+              expandedTitleScale: 2, // 展开时标题放大倍数
               title: const Text(
                 'PageJoy',
                 style: TextStyle(
@@ -417,7 +431,7 @@ class _HeadlineCarouselState extends State<HeadlineCarousel> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   image: const DecorationImage(
-                    image: NetworkImage('https://via.placeholder.com/600x300'),
+                    image: NetworkImage('https://images.pexels.com/photos/33541797/pexels-photo-33541797.jpeg'),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -546,20 +560,19 @@ class ArticleCard extends StatelessWidget {
     return Card(
       elevation: 2,
       child: SizedBox(
-        height: 124, // 调整为图片高度(100) + 上下内边距(12 * 2)
+        height: 124,
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center, // 修改为居中对齐
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Thumbnail
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: SizedBox(
                   width: 100,
                   height: 100,
                   child: Image.network(
-                    'https://via.placeholder.com/100x100',
+                    'https://images.pexels.com/photos/33541797/pexels-photo-33541797.jpeg',
                     fit: BoxFit.cover,
                   ),
                 ),
