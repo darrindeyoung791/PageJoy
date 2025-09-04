@@ -7,7 +7,7 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: const Text('个人中心'),
       ),
       body: const SingleChildScrollView(
         child: Column(
@@ -39,7 +39,7 @@ class _ProfileHeader extends StatelessWidget {
           ),
           SizedBox(height: 16),
           Text(
-            'User Name',
+            '用户名',
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 8),
@@ -61,13 +61,13 @@ class _ProfileDetails extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Details',
+            '详细信息',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 8),
-          Text('Member since: 2023-01-01'),
-          Text('Articles read: 100'),
-          Text('Likes: 50'),
+          Text('注册时间: 2023-01-01'),
+          Text('阅读文章: 100'),
+          Text('点赞数: 50'),
         ],
       ),
     );
@@ -85,12 +85,12 @@ class _SubscriptionStatus extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Subscription',
+            '订阅信息',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 8),
-          Text('Status: Active'),
-          Text('Expires: 2024-01-01'),
+          Text('状态: 有效'),
+          Text('到期时间: 2024-01-01'),
         ],
       ),
     );
@@ -108,27 +108,27 @@ class _ProfileOptions extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Options',
+            '选项',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           ListTile(
             leading: const Icon(Icons.history),
-            title: const Text('Reading History'),
+            title: const Text('阅读历史'),
             onTap: () {
               // TODO: Implement reading history
             },
           ),
           ListTile(
             leading: const Icon(Icons.settings),
-            title: const Text('Settings'),
+            title: const Text('设置'),
             onTap: () {
               // TODO: Implement settings
             },
           ),
           ListTile(
             leading: const Icon(Icons.logout),
-            title: const Text('Logout'),
+            title: const Text('退出登录'),
             onTap: () {
               // TODO: Implement logout
             },

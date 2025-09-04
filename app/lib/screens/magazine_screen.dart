@@ -7,7 +7,7 @@ class MagazineScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Magazine'),
+        title: const Text('杂志'),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -50,7 +50,7 @@ class _MagazineHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Magazine Name',
+                '杂志名称',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -59,7 +59,7 @@ class _MagazineHeader extends StatelessWidget {
               ),
               SizedBox(height: 8),
               Text(
-                'Magazine Description',
+                '杂志描述',
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.white,
@@ -84,12 +84,12 @@ class _MagazineArticles extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Articles',
+            '文章',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 16),
           // TODO: Implement articles list
-          Text('List of articles in this magazine'),
+          Text('此杂志中的文章列表'),
         ],
       ),
     );

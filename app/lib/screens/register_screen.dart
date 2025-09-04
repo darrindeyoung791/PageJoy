@@ -27,7 +27,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (_formKey.currentState!.validate()) {
       // TODO: Implement registration logic
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Processing Registration')),
+        const SnackBar(content: Text('正在注册...')),
       );
     }
   }
@@ -36,7 +36,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Register'),
+        title: const Text('注册'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -48,12 +48,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
               TextFormField(
                 controller: _usernameController,
                 decoration: const InputDecoration(
-                  labelText: 'Username',
+                  labelText: '用户名',
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter a username';
+                    return '请输入用户名';
                   }
                   return null;
                 },
@@ -62,15 +62,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
               TextFormField(
                 controller: _emailController,
                 decoration: const InputDecoration(
-                  labelText: 'Email',
+                  labelText: '邮箱',
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter your email';
+                    return '请输入邮箱';
                   }
                   if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-                    return 'Please enter a valid email';
+                    return '请输入有效的邮箱地址';
                   }
                   return null;
                 },
@@ -79,16 +79,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
               TextFormField(
                 controller: _passwordController,
                 decoration: const InputDecoration(
-                  labelText: 'Password',
+                  labelText: '密码',
                   border: OutlineInputBorder(),
                 ),
                 obscureText: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter a password';
+                    return '请输入密码';
                   }
                   if (value.length < 6) {
-                    return 'Password must be at least 6 characters';
+                    return '密码至少需要6个字符';
                   }
                   return null;
                 },
@@ -97,16 +97,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
               TextFormField(
                 controller: _confirmPasswordController,
                 decoration: const InputDecoration(
-                  labelText: 'Confirm Password',
+                  labelText: '确认密码',
                   border: OutlineInputBorder(),
                 ),
                 obscureText: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please confirm your password';
+                    return '请确认密码';
                   }
                   if (value != _passwordController.text) {
-                    return 'Passwords do not match';
+                    return '密码不匹配';
                   }
                   return null;
                 },
@@ -114,14 +114,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: _register,
-                child: const Text('Register'),
+                child: const Text('注册'),
               ),
               const SizedBox(height: 16),
               TextButton(
                 onPressed: () {
                   Navigator.pushNamed(context, '/login');
                 },
-                child: const Text('Already have an account? Login'),
+                child: const Text('已有账户？登录'),
               ),
             ],
           ),

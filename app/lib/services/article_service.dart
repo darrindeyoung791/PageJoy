@@ -18,29 +18,29 @@ class ArticleService {
   // Generate sample articles for offline mode
   static List<Article> generateSampleArticles() {
     final titles = [
-      'Flutter 3.0 Released with New Features',
-      'Understanding Dart Null Safety',
-      'Building Responsive UIs in Flutter',
-      'State Management in Flutter: Provider vs Bloc',
-      'Flutter Web: Tips and Tricks',
-      'Creating Custom Animations in Flutter',
-      'Testing Flutter Applications',
-      'Flutter Performance Optimization',
-      'Integrating Firebase with Flutter',
-      'Building a Chat App with Flutter',
-      'Flutter Navigation 2.0 Explained',
-      'Theming in Flutter: Light and Dark Mode',
-      'Flutter for Desktop: Getting Started',
-      'Using SQLite in Flutter Apps',
-      'Flutter vs React Native: A Comparison',
+      'Flutter 3.0 发布新功能',
+      '理解 Dart 空安全',
+      '在 Flutter 中构建响应式 UI',
+      'Flutter 状态管理：Provider vs Bloc',
+      'Flutter Web：技巧和窍门',
+      '在 Flutter 中创建自定义动画',
+      '测试 Flutter 应用程序',
+      'Flutter 性能优化',
+      '将 Firebase 与 Flutter 集成',
+      '使用 Flutter 构建聊天应用',
+      'Flutter Navigation 2.0 详解',
+      'Flutter 主题：浅色和深色模式',
+      'Flutter 桌面开发入门',
+      '在 Flutter 应用中使用 SQLite',
+      'Flutter vs React Native 对比',
     ];
     
     final contents = [
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl.',
-      'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-      'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-      'Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris.',
-      'Praesent dapibus, neque id cursus faucibus, tortor neque egestas augue, eu vulputate magna eros eu erat. Aliquam erat volutpat. Nam dui mi, tincidunt quis, accumsan porttitor, facilisis luctus, metus.',
+      '这是示例文章的内容。这只是为了演示目的而创建的虚拟内容。在实际应用中，这些内容将从后端 API 获取。',
+      '这是另一篇示例文章的内容。它展示了如何在 Flutter 应用中显示长文本内容，并处理文本溢出和多行显示。',
+      '这是第三篇示例文章的内容。这些示例文章用于在离线模式下演示应用的功能，无需连接到实际的后端服务器。',
+      '这是第四篇示例文章的内容。在实际应用中，这些文章将包含来自作者的真实内容，可能包括图片、视频和其他富媒体元素。',
+      '这是第五篇示例文章的内容。这些示例文章帮助开发者在没有网络连接的情况下测试应用的 UI 和功能。',
     ];
     
     final random = Random();
@@ -67,7 +67,7 @@ class ArticleService {
 
   static Future<Article> createArticle(Map<String, dynamic> articleData) async {
     if (_isOffline) {
-      throw Exception('Cannot create article in offline mode');
+      throw Exception('离线模式下无法创建文章');
     }
     
     final response = await ApiService.post('/articles/', articleData);
@@ -75,7 +75,7 @@ class ArticleService {
     if (response.statusCode == 200) {
       return Article.fromJson(json.decode(response.body));
     } else {
-      throw Exception('Failed to create article');
+      throw Exception('创建文章失败');
     }
   }
 
@@ -94,7 +94,7 @@ class ArticleService {
     if (response.statusCode == 200) {
       return Article.fromJson(json.decode(response.body));
     } else {
-      throw Exception('Failed to load article');
+      throw Exception('加载文章失败');
     }
   }
 
@@ -113,13 +113,13 @@ class ArticleService {
       final List<dynamic> articlesJson = json.decode(response.body);
       return articlesJson.map((json) => Article.fromJson(json)).toList();
     } else {
-      throw Exception('Failed to load articles');
+      throw Exception('加载文章失败');
     }
   }
 
   static Future<Article> updateArticle(int articleId, Map<String, dynamic> articleData) async {
     if (_isOffline) {
-      throw Exception('Cannot update article in offline mode');
+      throw Exception('离线模式下无法更新文章');
     }
     
     final response = await ApiService.put('/articles/$articleId', articleData);
@@ -127,19 +127,19 @@ class ArticleService {
     if (response.statusCode == 200) {
       return Article.fromJson(json.decode(response.body));
     } else {
-      throw Exception('Failed to update article');
+      throw Exception('更新文章失败');
     }
   }
 
   static Future<void> deleteArticle(int articleId) async {
     if (_isOffline) {
-      throw Exception('Cannot delete article in offline mode');
+      throw Exception('离线模式下无法删除文章');
     }
     
     final response = await ApiService.delete('/articles/$articleId');
     
     if (response.statusCode != 200) {
-      throw Exception('Failed to delete article');
+      throw Exception('删除文章失败');
     }
   }
 }

@@ -9,7 +9,7 @@ class UserService {
     if (response.statusCode == 200) {
       return User.fromJson(json.decode(response.body));
     } else {
-      throw Exception('Failed to create user');
+      throw Exception('创建用户失败');
     }
   }
 
@@ -19,7 +19,7 @@ class UserService {
     if (response.statusCode == 200) {
       return User.fromJson(json.decode(response.body));
     } else {
-      throw Exception('Failed to load user');
+      throw Exception('加载用户失败');
     }
   }
 
@@ -30,7 +30,7 @@ class UserService {
       final List<dynamic> usersJson = json.decode(response.body);
       return usersJson.map((json) => User.fromJson(json)).toList();
     } else {
-      throw Exception('Failed to load users');
+      throw Exception('加载用户失败');
     }
   }
 
@@ -40,7 +40,7 @@ class UserService {
     if (response.statusCode == 200) {
       return User.fromJson(json.decode(response.body));
     } else {
-      throw Exception('Failed to update user');
+      throw Exception('更新用户失败');
     }
   }
 
@@ -48,7 +48,7 @@ class UserService {
     final response = await ApiService.delete('/users/$userId');
     
     if (response.statusCode != 200) {
-      throw Exception('Failed to delete user');
+      throw Exception('删除用户失败');
     }
   }
 }

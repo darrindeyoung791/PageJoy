@@ -23,7 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (_formKey.currentState!.validate()) {
       // TODO: Implement login logic
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Processing Login')),
+        const SnackBar(content: Text('正在登录...')),
       );
     }
   }
@@ -32,7 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login'),
+        title: const Text('登录'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -44,12 +44,12 @@ class _LoginScreenState extends State<LoginScreen> {
               TextFormField(
                 controller: _usernameController,
                 decoration: const InputDecoration(
-                  labelText: 'Username',
+                  labelText: '用户名',
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter your username';
+                    return '请输入用户名';
                   }
                   return null;
                 },
@@ -58,13 +58,13 @@ class _LoginScreenState extends State<LoginScreen> {
               TextFormField(
                 controller: _passwordController,
                 decoration: const InputDecoration(
-                  labelText: 'Password',
+                  labelText: '密码',
                   border: OutlineInputBorder(),
                 ),
                 obscureText: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter your password';
+                    return '请输入密码';
                   }
                   return null;
                 },
@@ -72,14 +72,14 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: _login,
-                child: const Text('Login'),
+                child: const Text('登录'),
               ),
               const SizedBox(height: 16),
               TextButton(
                 onPressed: () {
                   Navigator.pushNamed(context, '/register');
                 },
-                child: const Text('Don\'t have an account? Register'),
+                child: const Text('还没有账户？注册'),
               ),
             ],
           ),

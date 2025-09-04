@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/article.dart';
 import '../services/article_service.dart';
+import '../widgets/article_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -56,17 +57,17 @@ class _HomeScreenState extends State<HomeScreen> {
               NavigationRailDestination(
                 icon: Icon(Icons.home_outlined),
                 selectedIcon: Icon(Icons.home),
-                label: Text('Home'),
+                label: Text('首页'),
               ),
               NavigationRailDestination(
                 icon: Icon(Icons.favorite_border),
                 selectedIcon: Icon(Icons.favorite),
-                label: Text('Favorites'),
+                label: Text('收藏'),
               ),
               NavigationRailDestination(
                 icon: Icon(Icons.person_outline),
                 selectedIcon: Icon(Icons.person),
-                label: Text('Profile'),
+                label: Text('个人'),
               ),
             ],
           ),
@@ -77,9 +78,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 SliverAppBar(
                   expandedHeight: 120,
                   collapsedHeight: 60,
-                  floating: true,
+                  floating: false,
                   pinned: true,
-                  snap: false,
                   flexibleSpace: FlexibleSpaceBar(
                     expandedTitleScale: 2,
                     title: const Text(
@@ -94,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     IconButton(
                       icon: Icon(_isOffline ? Icons.wifi_off : Icons.wifi),
                       onPressed: _toggleOfflineMode,
-                      tooltip: _isOffline ? 'Offline Mode' : 'Online Mode',
+                      tooltip: _isOffline ? '离线模式' : '在线模式',
                     ),
                     IconButton(
                       icon: const Icon(Icons.search),
@@ -123,9 +123,8 @@ class _HomeScreenState extends State<HomeScreen> {
           SliverAppBar(
             expandedHeight: 200,  // 展开时的高度
             collapsedHeight: 60, // 折叠高度
-            floating: true,       // 允许向下滚动时重新显示
+            floating: false,       // 允许向下滚动时重新显示
             pinned: true,        // 完全隐藏
-            snap: false,           // 自动展开/折叠
             flexibleSpace: FlexibleSpaceBar(
               expandedTitleScale: 2, // 展开时标题放大倍数
               title: const Text(
@@ -140,7 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
               IconButton(
                 icon: Icon(_isOffline ? Icons.wifi_off : Icons.wifi),
                 onPressed: _toggleOfflineMode,
-                tooltip: _isOffline ? 'Offline Mode' : 'Online Mode',
+                tooltip: _isOffline ? '离线模式' : '在线模式',
               ),
               IconButton(
                 icon: const Icon(Icons.search),
@@ -167,17 +166,17 @@ class _HomeScreenState extends State<HomeScreen> {
           NavigationDestination(
             icon: Icon(Icons.home_outlined),
             selectedIcon: Icon(Icons.home),
-            label: 'Home',
+            label: '首页',
           ),
           NavigationDestination(
             icon: Icon(Icons.favorite_border),
             selectedIcon: Icon(Icons.favorite),
-            label: 'Favorites',
+            label: '收藏',
           ),
           NavigationDestination(
             icon: Icon(Icons.person_outline),
             selectedIcon: Icon(Icons.person),
-            label: 'Profile',
+            label: '个人',
           ),
         ],
       ),
@@ -215,7 +214,7 @@ class _FavoritesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Center(
-      child: Text('Favorites'),
+      child: Text('收藏'),
     );
   }
 }
@@ -226,7 +225,7 @@ class _ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Center(
-      child: Text('Profile'),
+      child: Text('个人'),
     );
   }
 }
@@ -270,7 +269,7 @@ class _ArticleFeedState extends State<ArticleFeed> {
         } else if (snapshot.hasError) {
           return _buildErrorContent();
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text('No articles found'));
+          return const Center(child: Text('未找到文章'));
         } else {
           final articles = snapshot.data!;
           return SingleChildScrollView(
@@ -292,7 +291,7 @@ class _ArticleFeedState extends State<ArticleFeed> {
                         Icon(Icons.wifi_off, color: Colors.orange),
                         SizedBox(width: 8),
                         Text(
-                          'Offline mode - showing sample content',
+                          '离线模式 - 显示示例内容',
                           style: TextStyle(
                             color: Colors.orange,
                             fontWeight: FontWeight.bold,
@@ -338,7 +337,7 @@ class _ArticleFeedState extends State<ArticleFeed> {
                   Icon(Icons.wifi_off, color: Colors.orange),
                   SizedBox(width: 8),
                   Text(
-                    'Offline mode - showing sample content',
+                    '离线模式 - 显示示例内容',
                     style: TextStyle(
                       color: Colors.orange,
                       fontWeight: FontWeight.bold,
@@ -365,11 +364,11 @@ class _ArticleFeedState extends State<ArticleFeed> {
           const Icon(Icons.error, size: 48, color: Colors.red),
           const SizedBox(height: 16),
           const Text(
-            'Failed to load articles',
+            '加载文章失败',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
-          const Text('Please check your internet connection'),
+          const Text('请检查您的网络连接'),
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () {
@@ -377,7 +376,7 @@ class _ArticleFeedState extends State<ArticleFeed> {
                 _articlesFuture = ArticleService.getArticles();
               });
             },
-            child: const Text('Retry'),
+            child: const Text('重试'),
           ),
         ],
       ),
@@ -426,52 +425,62 @@ class _HeadlineCarouselState extends State<HeadlineCarousel> {
             },
             itemBuilder: (context, index) {
               final article = widget.articles[index];
-              return Container(
-                margin: const EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  image: const DecorationImage(
-                    image: NetworkImage('https://images.pexels.com/photos/33541797/pexels-photo-33541797.jpeg'),
-                    fit: BoxFit.cover,
-                  ),
-                ),
+              return GestureDetector(
+                onTap: () {
+                  // Navigate to article screen when carousel item is tapped
+                  Navigator.pushNamed(
+                    context,
+                    '/article',
+                    arguments: article,
+                  );
+                },
                 child: Container(
+                  margin: const EdgeInsets.all(16.0),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.transparent,
-                        Colors.black.withOpacity(0.7),
-                      ],
+                    image: const DecorationImage(
+                      image: NetworkImage('https://images.pexels.com/photos/33541797/pexels-photo-33541797.jpeg'),
+                      fit: BoxFit.cover,
                     ),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          article.title,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          Colors.black.withOpacity(0.7),
+                        ],
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            article.title,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'By Creator • ${article.createdAt.day}/${article.createdAt.month}/${article.createdAt.year}',
-                          style: const TextStyle(
-                            color: Colors.white70,
-                            fontSize: 14,
+                          const SizedBox(height: 8),
+                          Text(
+                            '创作者 • ${article.createdAt.day}/${article.createdAt.month}/${article.createdAt.year}',
+                            style: const TextStyle(
+                              color: Colors.white70,
+                              fontSize: 14,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -550,99 +559,3 @@ class ArticleList extends StatelessWidget {
   }
 }
 
-class ArticleCard extends StatelessWidget {
-  final Article article;
-
-  const ArticleCard({super.key, required this.article});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
-      child: SizedBox(
-        height: 124,
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: SizedBox(
-                  width: 100,
-                  height: 100,
-                  child: Image.network(
-                    'https://images.pexels.com/photos/33541797/pexels-photo-33541797.jpeg',
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              // Content
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center, // 修改为居中对齐
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Title
-                    Text(
-                      article.title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        height: 1.2,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    // Creator chip inline with content
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start, // 确保文本对齐
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: const Text(
-                            'Creator',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ),
-                        const Text(
-                          ' • ',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 14,
-                          ),
-                        ),
-                        // Content preview on the same line
-                        Expanded(
-                          child: Text(
-                            article.content,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey,
-                              height: 1.2,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}

@@ -7,7 +7,7 @@ class SubscriptionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Subscription'),
+        title: const Text('订阅'),
       ),
       body: const SingleChildScrollView(
         child: Column(
@@ -33,17 +33,17 @@ class _CurrentSubscription extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Current Subscription',
+            '当前订阅',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 8),
-          Text('Plan: Premium'),
-          Text('Status: Active'),
-          Text('Expires: 2024-01-01'),
+          Text('套餐: 高级版'),
+          Text('状态: 有效'),
+          Text('到期时间: 2024-01-01'),
           SizedBox(height: 16),
           ElevatedButton(
             onPressed: null, // TODO: Implement cancel subscription
-            child: Text('Cancel Subscription'),
+            child: Text('取消订阅'),
           ),
         ],
       ),
@@ -62,12 +62,12 @@ class _SubscriptionPlans extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Available Plans',
+            '可用套餐',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 16),
           // TODO: Implement subscription plans list
-          Text('List of available subscription plans'),
+          Text('可用订阅套餐列表'),
         ],
       ),
     );
