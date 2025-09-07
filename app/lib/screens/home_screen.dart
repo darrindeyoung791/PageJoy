@@ -74,22 +74,14 @@ class _HomeScreenState extends State<HomeScreen> {
           // Main content
           Expanded(
             child: CustomScrollView(
+              physics: const ClampingScrollPhysics(), // 添加平滑滚动物理效果
               slivers: [
                 SliverAppBar(
                   expandedHeight: 120,
                   collapsedHeight: 60,
                   floating: false,
                   pinned: true,
-                  flexibleSpace: FlexibleSpaceBar(
-                    expandedTitleScale: 2,
-                    title: const Text(
-                      'PageJoy',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    titlePadding: const EdgeInsets.only(left: 16, bottom: 16),
-                  ),
+                  flexibleSpace: _buildFlexibleSpaceBar('PageJoy'),
                   actions: [
                     IconButton(
                       icon: Icon(_isOffline ? Icons.wifi_off : Icons.wifi),
@@ -119,22 +111,14 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildBottomNavigation() {
     return Scaffold(
       body: CustomScrollView(
+        physics: const ClampingScrollPhysics(), // 添加平滑滚动物理效果
         slivers: [
           SliverAppBar(
             expandedHeight: 200,  // 展开时的高度
             collapsedHeight: 60, // 折叠高度
             floating: false,       // 允许向下滚动时重新显示
             pinned: true,        // 完全隐藏
-            flexibleSpace: FlexibleSpaceBar(
-              expandedTitleScale: 2, // 展开时标题放大倍数
-              title: const Text(
-                'PageJoy',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              titlePadding: const EdgeInsets.only(left: 16, bottom: 16), // 展开时的标题位置
-            ),
+            flexibleSpace: _buildFlexibleSpaceBar('PageJoy'),
             actions: [
               IconButton(
                 icon: Icon(_isOffline ? Icons.wifi_off : Icons.wifi),
@@ -194,6 +178,30 @@ class _HomeScreenState extends State<HomeScreen> {
       default:
         return _HomeFeed(isOffline: _isOffline);
     }
+  }
+
+  Widget _buildFlexibleSpaceBar(String title) {
+    return Builder(
+      builder: (BuildContext context) {
+        // 获取安全区域边距
+        final EdgeInsets safeAreaPadding = MediaQuery.of(context).padding;
+        
+        return FlexibleSpaceBar(
+          expandedTitleScale: 2,
+          title: Text(
+            title,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          titlePadding: EdgeInsets.only(
+            left: 16 + safeAreaPadding.left,
+            bottom: 16,
+            right: 16 + safeAreaPadding.right,
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -273,6 +281,7 @@ class _ArticleFeedState extends State<ArticleFeed> {
         } else {
           final articles = snapshot.data!;
           return SingleChildScrollView(
+            physics: const ClampingScrollPhysics(), // 添加平滑滚动物理效果
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -320,6 +329,7 @@ class _ArticleFeedState extends State<ArticleFeed> {
       // Load sample articles directly
       final sampleArticles = ArticleService.generateSampleArticles();
       return SingleChildScrollView(
+        physics: const ClampingScrollPhysics(), // 添加平滑滚动物理效果
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

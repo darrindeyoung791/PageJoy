@@ -9,8 +9,9 @@ class ProfileScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('个人中心'),
       ),
-      body: const SingleChildScrollView(
-        child: Column(
+      body: SingleChildScrollView(
+        physics: const ClampingScrollPhysics(), // 添加平滑滚动物理效果
+        child: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _ProfileHeader(),

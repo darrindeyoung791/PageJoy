@@ -9,8 +9,9 @@ class SubscriptionScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('订阅'),
       ),
-      body: const SingleChildScrollView(
-        child: Column(
+      body: SingleChildScrollView(
+        physics: const ClampingScrollPhysics(), // 添加平滑滚动物理效果
+        child: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _CurrentSubscription(),

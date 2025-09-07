@@ -11,31 +11,50 @@ class ArticleScreen extends StatefulWidget {
 }
 
 class _ArticleScreenState extends State<ArticleScreen> {
-  @override
   Widget build(BuildContext context) {
+    // Article screen should always use the same layout regardless of screen size or orientation
+    // It should not show navigation rail or bottom navigation
+    return _buildArticleView();
+  }
+
+  Widget _buildArticleView() {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('文章'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.share),
-            onPressed: () {
-              // TODO: Implement share functionality
-            },
-          ),
-        ],
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _ArticleHeader(widget.article),
-              const _ArticleSummary(),
-              _ArticleContent(widget.article),
+      body: CustomScrollView(
+        physics: const ClampingScrollPhysics(), // 添加平滑滚动物理效果
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 200,  // 展开时的高度
+            collapsedHeight: 60, // 折叠高度
+            floating: false,       // 允许向下滚动时重新显示
+            pinned: true,        // 完全隐藏
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            flexibleSpace: _buildFlexibleSpaceBar(),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.share),
+                onPressed: () {
+                  // TODO: Implement share functionality
+                },
+              ),
             ],
           ),
-        ),
+          // Article content without header title
+          SliverToBoxAdapter(
+            child: SafeArea(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _ArticleHeaderWithoutTitle(widget.article),
+                  const _ArticleSummary(),
+                  _ArticleContent(widget.article),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -43,6 +62,46 @@ class _ArticleScreenState extends State<ArticleScreen> {
         },
         child: const Icon(Icons.favorite_border),
       ),
+    );
+  }
+
+  Widget _buildFlexibleSpaceBar() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // 获取安全区域边距
+        final EdgeInsets safeAreaPadding = MediaQuery.of(context).padding;
+        
+        // 计算展开比例
+        final double expandRatio = (constraints.biggest.height - 60) / (200 - 60);
+        // 确保比例在 0-1 之间
+        final double clampedRatio = expandRatio.clamp(0.0, 1.0);
+        
+        // 动态计算左边距：展开时为 16 + 安全区域左边距，收缩时为 72 + 安全区域左边距
+        final double leftPadding = 16 + (72 - 16) * (1 - clampedRatio) + safeAreaPadding.left;
+        
+        // 动态计算右边距：展开时为 16 + 安全区域右边距，收缩时为 72 + 安全区域右边距（为分享按钮留出空间）
+        final double rightPadding = 16 + (72 - 16) * (1 - clampedRatio) + safeAreaPadding.right;
+        
+        // 动态设置最大行数：展开时3行，收缩时1行
+        final int maxLines = clampedRatio < 0.5 ? 1 : 3;
+        
+        return FlexibleSpaceBar(
+          expandedTitleScale: 1.5,
+          title: Text(
+            widget.article.title,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+            maxLines: maxLines,
+            overflow: TextOverflow.ellipsis,
+          ),
+          titlePadding: EdgeInsets.only(
+            left: leftPadding,
+            bottom: 16,
+            right: rightPadding,
+          ),
+        );
+      },
     );
   }
 }
@@ -77,6 +136,31 @@ class _ArticleHeader extends StatelessWidget {
   }
 }
 
+class _ArticleHeaderWithoutTitle extends StatelessWidget {
+  final Article article;
+
+  const _ArticleHeaderWithoutTitle(this.article);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('日期: ${article.createdAt.year}-${article.createdAt.month}-${article.createdAt.day}'),
+          const Text('作者: John Doe'), // TODO: Replace with actual author name
+          const SizedBox(height: 8),
+          ElevatedButton(
+            onPressed: null, // TODO: Implement follow functionality
+            child: const Text('关注作者'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _ArticleSummary extends StatelessWidget {
   const _ArticleSummary();
 
@@ -89,20 +173,27 @@ class _ArticleSummary extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
-        child: const Padding(
-          padding: EdgeInsets.all(16.0),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 'AI 摘要',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 8),
-              Text(
-                '这是文章内容的摘要，下列内容用于将其变长。\n好笑吗，我只看到我的手机经过了HLS 协议，一种基于 HTTP 的流媒体传输协议，广泛应用于视频点播和直播。它通过将视频内容切割成多个小片段（通常是 TS 格式或 fMP4 格式），并生成一个 M3U8 播放列表文件。客户端通过 HTTP 请求下载播放列表文件，然后按顺序下载和播放这些片段，然后又经过RTSP（Real-Time Streaming Protocol）：用于控制流媒体传输的协议，实现播放、暂停、快进等功能。 ',
-                style: TextStyle(fontSize: 20),
-              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      '这是文章内容的摘要。\n首先，这是第一点。\n其次，这是第二点。\n最后，这是最后一点。 ',
+                      style: const TextStyle(fontSize: 20),
+                      textAlign: TextAlign.justify,
+                    ),
+                  ),
+                ],
+              )
             ],
           ),
         ),

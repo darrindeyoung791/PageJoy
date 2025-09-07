@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from . import models
-from .database import engine, SessionLocal
+from models import models
+from database import engine, SessionLocal
 from routers import users, articles, magazines, subscription_plans, user_subscriptions, payments, likes, follows
 
 # 确保在创建表之前导入了所有模型

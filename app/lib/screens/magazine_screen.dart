@@ -10,6 +10,7 @@ class MagazineScreen extends StatelessWidget {
         title: const Text('杂志'),
       ),
       body: SingleChildScrollView(
+        physics: const ClampingScrollPhysics(), // 添加平滑滚动物理效果
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
