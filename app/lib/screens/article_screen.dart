@@ -25,14 +25,16 @@ class _ArticleScreenState extends State<ArticleScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _ArticleHeader(widget.article),
-            const _ArticleSummary(),
-            _ArticleContent(widget.article),
-          ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _ArticleHeader(widget.article),
+              const _ArticleSummary(),
+              _ArticleContent(widget.article),
+            ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -59,7 +61,7 @@ class _ArticleHeader extends StatelessWidget {
         children: [
           Text(
             article.title,
-            style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Text('日期: ${article.createdAt.year}-${article.createdAt.month}-${article.createdAt.day}'),
@@ -98,8 +100,8 @@ class _ArticleSummary extends StatelessWidget {
               ),
               SizedBox(height: 8),
               Text(
-                '这是文章内容的摘要。它提供了文章中讨论的主要观点的简要概述。',
-                style: TextStyle(fontSize: 24),
+                '这是文章内容的摘要，下列内容用于将其变长。\n好笑吗，我只看到我的手机经过了HLS 协议，一种基于 HTTP 的流媒体传输协议，广泛应用于视频点播和直播。它通过将视频内容切割成多个小片段（通常是 TS 格式或 fMP4 格式），并生成一个 M3U8 播放列表文件。客户端通过 HTTP 请求下载播放列表文件，然后按顺序下载和播放这些片段，然后又经过RTSP（Real-Time Streaming Protocol）：用于控制流媒体传输的协议，实现播放、暂停、快进等功能。 ',
+                style: TextStyle(fontSize: 20),
               ),
             ],
           ),
@@ -120,7 +122,7 @@ class _ArticleContent extends StatelessWidget {
       padding: const EdgeInsets.all(16.0),
       child: Text(
         article.content,
-        style: TextStyle(fontSize: 24),
+        style: TextStyle(fontSize: 20),
       ),
     );
   }
