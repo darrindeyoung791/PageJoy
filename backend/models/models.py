@@ -81,6 +81,7 @@ class Article(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String(255), nullable=False)
     content = Column(Text, nullable=False)
+    ai_summary = Column(Text, nullable=True)  # AI摘要字段
     status = Column(Enum(ArticleStatus), default=ArticleStatus.DRAFT, nullable=False)
     is_premium = Column(Boolean, default=False, nullable=False)
     price = Column(DECIMAL(10, 2), nullable=True)

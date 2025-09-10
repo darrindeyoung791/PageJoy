@@ -49,6 +49,7 @@ class ArticleStatus(str):
 class ArticleBase(BaseModel):
     title: str
     content: str
+    ai_summary: Optional[str] = None
     status: ArticleStatus = ArticleStatus.DRAFT
     is_premium: bool = False
     price: Optional[Decimal] = None
