@@ -53,6 +53,8 @@ class _HomeScreenState extends State<HomeScreen> {
               });
             },
             labelType: NavigationRailLabelType.all,
+            backgroundColor: Theme.of(context).colorScheme.surfaceContainer, // 直接设置背景色
+            elevation: 1, // 添加阴影效果
             destinations: const [
               NavigationRailDestination(
                 icon: Icon(Icons.home_outlined),
@@ -67,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
               NavigationRailDestination(
                 icon: Icon(Icons.person_outline),
                 selectedIcon: Icon(Icons.person),
-                label: Text('个人'),
+                label: Text('我的'),
               ),
             ],
           ),
@@ -160,7 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
           NavigationDestination(
             icon: Icon(Icons.person_outline),
             selectedIcon: Icon(Icons.person),
-            label: '个人',
+            label: '我的',
           ),
         ],
       ),
@@ -233,7 +235,7 @@ class _ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Center(
-      child: Text('个人'),
+      child: Text('我的'),
     );
   }
 }
