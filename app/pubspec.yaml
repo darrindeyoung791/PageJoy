@@ -1,4 +1,4 @@
-name: app
+name: PageJoy
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -64,9 +64,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/img/example1.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -79,17 +78,30 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: NotoSansSC
-  #     fonts:
-  #       - asset: fonts/NotoSansSC-Regular.ttf
-  #       - asset: fonts/NotoSansSC-Bold.ttf
-  #         weight: 700
-  #   - family: Lato
-  #     fonts:
-  #       - asset: fonts/Lato-Regular.ttf
-  #       - asset: fonts/Lato-Bold.ttf
-  #         weight: 700
+  fonts:
+    - family: NotoSansSC
+      fonts:
+        - asset: fonts/NotoSansCJK/NotoSansCJKsc-VF.ttf
+    - family: Lato
+      fonts:
+        - asset: fonts/Lato/LATO-REGULAR.TTF
+        - asset: fonts/Lato/LATO-BOLD.TTF
+          weight: 700
+        - asset: fonts/Lato/LATO-BLACK.TTF
+          weight: 900
+        - asset: fonts/Lato/LATO-LIGHT.TTF
+          weight: 300
+        - asset: fonts/Lato/LATO-ITALIC.TTF
+          style: italic
+        - asset: fonts/Lato/LATO-BOLDITALIC.TTF
+          weight: 700
+          style: italic
+        - asset: fonts/Lato/LATO-LIGHTITALIC.TTF
+          weight: 300
+          style: italic
+        - asset: fonts/Lato/LATO-BLACKITALIC.TTF
+          weight: 900
+          style: italic
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package

@@ -50,6 +50,22 @@ class _ArticleScreenState extends State<ArticleScreen> {
                   _ArticleHeaderWithoutTitle(widget.article),
                   const _ArticleSummary(),
                   _ArticleContent(widget.article),
+                  // Add a divider similar to Zhihu's style
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Divider(
+                      height: 32.0, // Increase height for better visual separation
+                      thickness: 0.5, // Thin line
+                      color: Colors.grey, // Color similar to Zhihu
+                    ),
+                  ),
+                  // Add 1/4 screen height padding at the end of the article
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      final screenHeight = MediaQuery.of(context).size.height;
+                      return SizedBox(height: screenHeight * 0.25);
+                    },
+                  ),
                 ],
               ),
             ),

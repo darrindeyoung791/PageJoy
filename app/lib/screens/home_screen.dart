@@ -449,7 +449,7 @@ class _HeadlineCarouselState extends State<HeadlineCarousel> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
                     image: const DecorationImage(
-                      image: NetworkImage('https://images.pexels.com/photos/33541797/pexels-photo-33541797.jpeg'),
+                      image: AssetImage('assets/img/example1.jpg'),
                       fit: BoxFit.cover,
                     ),
                   ),
