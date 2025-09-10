@@ -67,6 +67,25 @@ class ArticleService {
       'Flutter 和 React Native 是当前最流行的两种跨平台移动应用开发框架。\n\n对比分析：\n1. 性能：Flutter 更接近原生，React Native 依赖于桥接\n2. 开发效率：Flutter 热重载更快，React Native 生态成熟\n3. 社区支持：React Native 社区更大，Flutter 发展迅速\n\n选择合适的框架需要根据项目需求、团队技术栈和长期维护成本等多方面考虑。在对性能要求极高的项目中，Flutter 可能是更好的选择；而在需要快速迭代和广泛社区支持的项目中，React Native 则具有优势。\n\n两种框架都有各自的优势和适用场景，开发者需要根据具体情况进行选择。\n\n随着技术的不断发展，两种框架都在持续改进和完善，为开发者提供更好的开发体验和更强大的功能支持。',
     ];
     
+    // AI摘要示例
+    final aiSummaries = [
+      'Flutter 3.0 发布了许多新特性和改进，包括更好的着色器编译、减少应用启动时间以及默认提供的 Material 3 设计系统。新版本还增强了在不同平台上的表现，特别是在桌面端的支持更加完善。',
+      'Dart 空安全是一个重要的语言特性，它帮助开发者在编译时发现潜在的空指针错误。通过静态分析，编译器可以移除不必要的空检查，使代码运行更快，同时提高代码的可靠性和可维护性。',
+      '响应式编程是 Flutter 的核心概念之一。在 Flutter 中，一切都是 Widget，而 State 对象负责管理 Widget 的状态。当状态发生变化时，Flutter 框架会自动重建受影响的界面部分，确保用户界面始终反映最新的应用状态。',
+      'Flutter 提供了多种状态管理解决方案，包括 Provider 和 BLoC。Provider 简单轻量，适合中小型应用；BLoC 功能强大且可扩展，适合大型应用。选择合适的状态管理方案需要考虑项目规模、团队经验和具体需求。',
+      'Flutter Web 开发需要注意首次加载时间和性能优化。通过合理的代码分割和资源预加载，可以显著提升用户体验。同时，还需要考虑搜索引擎优化（SEO）的需求，确保应用能够被搜索引擎正确索引。',
+      '在 Flutter 中创建自定义动画可以极大地增强应用的用户体验。通过使用 AnimatedWidget 和 AnimationController，开发者可以轻松创建复杂的动画效果。动画设计需要考虑用户体验和性能平衡。',
+      '测试是确保 Flutter 应用质量的关键环节。Flutter 提供了丰富的测试框架和工具，包括单元测试、小部件测试和集成测试。通过使用这些工具，开发者可以对应用的各个层面进行全面的测试。',
+      '性能优化是 Flutter 开发中不可或缺的一部分。通过减少重绘区域、使用 const 构造函数、懒加载图片和资源，以及避免不必要的 setState() 调用，可以大幅提升应用的运行效率。',
+      '将 Firebase 与 Flutter 集成可以为应用增加强大的后端支持。Firebase 提供了实时数据库、身份验证、云存储等多种服务。通过使用 Firebase，开发者可以轻松实现用户认证、数据存储和推送通知等功能。',
+      '使用 Flutter 构建聊天应用需要考虑 WebSocket 实时通信、聊天记录的本地存储和消息推送通知等关键技术。通过合理使用 Flutter 的状态管理和网络请求库，可以快速构建出功能完善的聊天应用。',
+      'Flutter Navigation 2.0 带来了更加强大和灵活的路由管理能力，包括基于路由的导航、命名路由和动态路由支持，以及路由守卫功能。这使得 Flutter 应用能够更好地适应复杂的业务需求。',
+      'Flutter 主题系统支持应用的全局和局部主题定制，包括全局主题、局部主题和动态主题切换。通过使用 ThemeData，开发者可以轻松定义应用的色彩、字体和形状等视觉属性。',
+      'Flutter 桌面支持让开发者可以用一套代码同时构建 Windows、macOS 和 Linux 平台的应用。这不仅提高了开发效率，还能确保应用在不同平台上的一致性和稳定性。',
+      '在 Flutter 应用中使用 SQLite 可以实现高效的本地数据存储。通过使用 SQLite，开发者可以轻松实现应用数据的持久化存储，这对于需要离线支持的应用尤为重要。',
+      'Flutter 和 React Native 是当前最流行的两种跨平台移动应用开发框架。Flutter 更接近原生，性能更好；React Native 生态成熟，社区支持更大。选择合适的框架需要根据项目需求和团队技术栈进行考虑。',
+    ];
+    
     final random = Random();
     final articles = <Article>[];
     
@@ -76,6 +95,7 @@ class ArticleService {
           id: i + 1,
           title: titles[random.nextInt(titles.length)],
           content: contents[random.nextInt(contents.length)],
+          aiSummary: aiSummaries[random.nextInt(aiSummaries.length)], // 添加AI摘要
           status: 'published',
           isPremium: random.nextBool(),
           price: random.nextBool() ? 9.99 : null,
