@@ -212,7 +212,7 @@ class _ArticleSummary extends StatelessWidget {
                     child: Text(
                       aiSummary!,
                       style: const TextStyle(fontSize: 20),
-                      textAlign: TextAlign.justify,
+                      textAlign: TextAlign.left, // 修改为左对齐
                     ),
                   ),
                 ],
