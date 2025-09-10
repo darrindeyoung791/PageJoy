@@ -124,17 +124,18 @@ start_dev.bat
 
 ### 4. 文章表 (article)
 
-| 字段名     | 类型                                 | 允许空 | 默认值                      | 说明     |
-| ---------- | ------------------------------------ | ------ | --------------------------- | -------- |
-| id         | INT                                  | NO     | AUTO_INCREMENT              | 主键     |
-| title      | VARCHAR(255)                         | NO     |                             | 标题     |
-| content    | TEXT                                 | NO     |                             | 内容     |
-| status     | ENUM('draft','published','archived') | NO     | 'draft'                     | 状态     |
-| is_premium | BOOLEAN                              | NO     | FALSE                       | 是否付费 |
-| price      | DECIMAL(10,2)                        | YES    | NULL                        | 价格     |
-| created_at | DATETIME                             | NO     | CURRENT_TIMESTAMP           | 创建时间 |
-| updated_at | DATETIME                             | NO     | CURRENT_TIMESTAMP ON UPDATE | 更新时间 |
-| view_count | INT                                  | NO     | 0                           | 浏览次数 |
+| 字段名      | 类型                                 | 允许空 | 默认值                      | 说明     |
+| ----------- | ------------------------------------ | ------ | --------------------------- | -------- |
+| id          | INT                                  | NO     | AUTO_INCREMENT              | 主键     |
+| title       | VARCHAR(255)                         | NO     |                             | 标题     |
+| content     | TEXT                                 | NO     |                             | 内容     |
+| status      | ENUM('draft','published','archived') | NO     | 'draft'                     | 状态     |
+| is_premium  | BOOLEAN                              | NO     | FALSE                       | 是否付费 |
+| price       | DECIMAL(10,2)                        | YES    | NULL                        | 价格     |
+| ai_summary  | TEXT                                 | YES    | NULL                        | AI摘要   |
+| created_at  | DATETIME                             | NO     | CURRENT_TIMESTAMP           | 创建时间 |
+| updated_at  | DATETIME                             | NO     | CURRENT_TIMESTAMP ON UPDATE | 更新时间 |
+| view_count  | INT                                  | NO     | 0                           | 浏览次数 |
 
 ### 5. 杂志表 (magazine)
 
@@ -279,6 +280,7 @@ erDiagram
         string status
         boolean is_premium
         decimal price
+        text ai_summary
         datetime created_at
         datetime updated_at
         int view_count
