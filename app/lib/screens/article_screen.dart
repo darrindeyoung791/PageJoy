@@ -113,7 +113,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
           ),
           titlePadding: EdgeInsets.only(
             left: leftPadding,
-            bottom: 16,
+            bottom: 18,
             right: rightPadding,
           ),
         );
