@@ -48,7 +48,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _ArticleHeaderWithoutTitle(widget.article),
-                  const _ArticleSummary(),
+                  _ArticleSummary(aiSummary: widget.article.aiSummary),
                   _ArticleContent(widget.article),
                   // Add a divider similar to Zhihu's style
                   const Padding(
@@ -178,10 +178,17 @@ class _ArticleHeaderWithoutTitle extends StatelessWidget {
 }
 
 class _ArticleSummary extends StatelessWidget {
-  const _ArticleSummary();
+  final String? aiSummary;
+
+  const _ArticleSummary({this.aiSummary});
 
   @override
   Widget build(BuildContext context) {
+    // 如果没有AI摘要，则不显示摘要部分
+    if (aiSummary == null || aiSummary!.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Card(
@@ -203,7 +210,7 @@ class _ArticleSummary extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      '这是文章内容的摘要。\n首先，这是第一点。\n其次，这是第二点。\n最后，这是最后一点。 ',
+                      aiSummary!,
                       style: const TextStyle(fontSize: 20),
                       textAlign: TextAlign.justify,
                     ),

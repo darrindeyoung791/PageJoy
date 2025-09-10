@@ -2,6 +2,7 @@ class Article {
   final int id;
   final String title;
   final String content;
+  final String? aiSummary;  // 添加AI摘要字段
   final String status;
   final bool isPremium;
   final double? price;
@@ -13,6 +14,7 @@ class Article {
     required this.id,
     required this.title,
     required this.content,
+    this.aiSummary,  // 添加AI摘要字段
     required this.status,
     required this.isPremium,
     this.price,
@@ -26,6 +28,7 @@ class Article {
       id: json['id'],
       title: json['title'],
       content: json['content'],
+      aiSummary: json['ai_summary'],  // 添加AI摘要字段
       status: json['status'],
       isPremium: json['is_premium'],
       price: json['price']?.toDouble(),
@@ -40,6 +43,7 @@ class Article {
       'id': id,
       'title': title,
       'content': content,
+      'ai_summary': aiSummary,  // 添加AI摘要字段
       'status': status,
       'is_premium': isPremium,
       'price': price,
