@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 from database import get_db
-from models.models import Like
+from models.models import Like as LikeModel
 from schemas.schemas import LikeCreate, Like, LikeUpdate
 
 router = APIRouter(prefix="/likes", tags=["likes"])
@@ -10,16 +10,16 @@ router = APIRouter(prefix="/likes", tags=["likes"])
 @router.post("/", response_model=Like)
 def create_like(like: LikeCreate, db: Session = Depends(get_db)):
     # Check if the like already exists
-    existing_like = db.query(Like).filter(
-        Like.user_id == like.user_id,
-        Like.article_id == like.article_id if like.article_id else None,
-        Like.magazine_id == like.magazine_id if like.magazine_id else None
+    existing_like = db.query(LikeModel).filter(
+        LikeModel.user_id == like.user_id,
+        LikeModel.article_id == like.article_id if like.article_id else None,
+        LikeModel.magazine_id == like.magazine_id if like.magazine_id else None
     ).first()
     
     if existing_like:
         raise HTTPException(status_code=400, detail="Like already exists")
     
-    db_like = Like(**like.dict())
+    db_like = LikeModel(**like.dict())
     db.add(db_like)
     db.commit()
     db.refresh(db_like)
@@ -28,14 +28,14 @@ def create_like(like: LikeCreate, db: Session = Depends(get_db)):
 @router.get("/{user_id}/{content_type}/{content_id}", response_model=Like)
 def read_like(user_id: int, content_type: str, content_id: int, db: Session = Depends(get_db)):
     if content_type == "article":
-        db_like = db.query(Like).filter(
-            Like.user_id == user_id,
-            Like.article_id == content_id
+        db_like = db.query(LikeModel).filter(
+            LikeModel.user_id == user_id,
+            LikeModel.article_id == content_id
         ).first()
     elif content_type == "magazine":
-        db_like = db.query(Like).filter(
-            Like.user_id == user_id,
-            Like.magazine_id == content_id
+        db_like = db.query(LikeModel).filter(
+            LikeModel.user_id == user_id,
+            LikeModel.magazine_id == content_id
         ).first()
     else:
         raise HTTPException(status_code=400, detail="Invalid content type")
@@ -46,20 +46,20 @@ def read_like(user_id: int, content_type: str, content_id: int, db: Session = De
 
 @router.get("/user/{user_id}", response_model=List[Like])
 def read_user_likes(user_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    likes = db.query(Like).filter(Like.user_id == user_id).offset(skip).limit(limit).all()
+    likes = db.query(LikeModel).filter(LikeModel.user_id == user_id).offset(skip).limit(limit).all()
     return likes
 
 @router.delete("/{user_id}/{content_type}/{content_id}")
 def delete_like(user_id: int, content_type: str, content_id: int, db: Session = Depends(get_db)):
     if content_type == "article":
-        db_like = db.query(Like).filter(
-            Like.user_id == user_id,
-            Like.article_id == content_id
+        db_like = db.query(LikeModel).filter(
+            LikeModel.user_id == user_id,
+            LikeModel.article_id == content_id
         ).first()
     elif content_type == "magazine":
-        db_like = db.query(Like).filter(
-            Like.user_id == user_id,
-            Like.magazine_id == content_id
+        db_like = db.query(LikeModel).filter(
+            LikeModel.user_id == user_id,
+            LikeModel.magazine_id == content_id
         ).first()
     else:
         raise HTTPException(status_code=400, detail="Invalid content type")

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 from database import get_db
-from models.models import User
+from models.models import User as UserModel
 from schemas.schemas import UserCreate, User, UserUpdate
 from passlib.context import CryptContext
 
@@ -18,14 +18,14 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 def get_user(db: Session, user_id: int):
-    return db.query(User).filter(User.id == user_id).first()
+    return db.query(UserModel).filter(UserModel.id == user_id).first()
 
 def get_user_by_username(db: Session, username: str):
-    return db.query(User).filter(User.username == username).first()
+    return db.query(UserModel).filter(UserModel.username == username).first()
 
 def create_user(db: Session, user: UserCreate):
     hashed_password = get_password_hash(user.password)
-    db_user = User(
+    db_user = UserModel(
         username=user.username,
         email=user.email,
         phone=user.phone,
@@ -53,7 +53,7 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
 
 @router.get("/", response_model=List[User])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    users = db.query(User).offset(skip).limit(limit).all()
+    users = db.query(UserModel).offset(skip).limit(limit).all()
     return users
 
 @router.put("/{user_id}", response_model=User)
