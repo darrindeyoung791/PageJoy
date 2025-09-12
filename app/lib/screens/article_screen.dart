@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'; // For FontVariation
 import '../models/article.dart';
 
 class ArticleScreen extends StatefulWidget {
@@ -105,15 +106,16 @@ class _ArticleScreenState extends State<ArticleScreen> {
           expandedTitleScale: 1.5,
           title: Text(
             widget.article.title,
-            style: const TextStyle(
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
+              fontVariations: [FontVariation('wght', 700.0)], // 保持粗体效果
             ),
             maxLines: maxLines,
             overflow: TextOverflow.ellipsis,
           ),
           titlePadding: EdgeInsets.only(
             left: leftPadding,
-            bottom: 18,
+            bottom: 17,
             right: rightPadding,
           ),
         );
@@ -129,6 +131,7 @@ class _ArticleHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -136,11 +139,26 @@ class _ArticleHeader extends StatelessWidget {
         children: [
           Text(
             article.title,
-            style: const TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
+            style: textTheme.displaySmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              fontVariations: [FontVariation('wght', 700.0)], // 保持粗体效果
+            ),
           ),
           const SizedBox(height: 8),
-          Text('日期: ${article.createdAt.year}-${article.createdAt.month}-${article.createdAt.day}'),
-          const Text('作者: John Doe'), // TODO: Replace with actual author name
+          Text(
+            '日期: ${article.createdAt.year}-${article.createdAt.month}-${article.createdAt.day}',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w500,
+              fontVariations: [FontVariation('wght', 500.0)],
+            ),
+          ),
+          Text(
+            '作者: John Doe', // TODO: Replace with actual author name
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w500,
+              fontVariations: [FontVariation('wght', 500.0)],
+            ),
+          ),
           const SizedBox(height: 8),
           ElevatedButton(
             onPressed: null, // TODO: Implement follow functionality
@@ -164,8 +182,20 @@ class _ArticleHeaderWithoutTitle extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('日期: ${article.createdAt.year}-${article.createdAt.month}-${article.createdAt.day}'),
-          const Text('作者: John Doe'), // TODO: Replace with actual author name
+          Text(
+            '日期: ${article.createdAt.year}-${article.createdAt.month}-${article.createdAt.day}',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w500,
+              fontVariations: [FontVariation('wght', 500.0)],
+            ),
+          ),
+          Text(
+            '作者: John Doe', // TODO: Replace with actual author name
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w500,
+              fontVariations: [FontVariation('wght', 500.0)],
+            ),
+          ),
           const SizedBox(height: 8),
           ElevatedButton(
             onPressed: null, // TODO: Implement follow functionality
@@ -184,6 +214,7 @@ class _ArticleSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     // 如果没有AI摘要，则不显示摘要部分
     if (aiSummary == null || aiSummary!.isEmpty) {
       return const SizedBox.shrink();
@@ -201,9 +232,12 @@ class _ArticleSummary extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'AI 摘要',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  fontVariations: [FontVariation('wght', 700.0)], // 保持粗体效果
+                ),
               ),
               const SizedBox(height: 8),
               Row(
@@ -211,7 +245,9 @@ class _ArticleSummary extends StatelessWidget {
                   Expanded(
                     child: Text(
                       aiSummary!,
-                      style: const TextStyle(fontSize: 20),
+                      style: textTheme.titleLarge?.copyWith(
+                        fontVariations: [FontVariation('wght', 500.0)], // 使用与主题一致的字重
+                      ),
                       textAlign: TextAlign.left, // 修改为左对齐
                     ),
                   ),
@@ -232,11 +268,14 @@ class _ArticleContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Text(
         article.content,
-        style: TextStyle(fontSize: 20),
+        style: textTheme.titleLarge?.copyWith(
+          fontVariations: [FontVariation('wght', 500.0)], // 使用与主题一致的字重
+        ),
       ),
     );
   }

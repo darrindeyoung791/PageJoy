@@ -20,7 +20,7 @@ class ArticleCard extends StatelessWidget {
         },
         borderRadius: BorderRadius.circular(12),
         child: SizedBox(
-          height: 124,
+          height: 96,
           child: Padding(
             padding: const EdgeInsets.all(12.0),
             child: Row(
@@ -51,15 +51,18 @@ class ArticleCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Title with larger font size
-                      Text(
-                        article.title,
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                          height: 1.3,
-                        ),
+                      Builder(
+                        builder: (context) {
+                          return Text(
+                            article.title,
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w500,
+                              height: 1.3,
+                            ),
+                          );
+                        }
                       ),
                       const SizedBox(height: 8),
                       // Creator chip
@@ -69,12 +72,17 @@ class ArticleCard extends StatelessWidget {
                           color: Theme.of(context).colorScheme.surfaceContainerHighest,
                           borderRadius: BorderRadius.circular(4),
                         ),
-                        child: const Text(
-                          '创作者',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
-                          ),
+                        child: Builder(
+                          builder: (context) {
+                            return Text(
+                              '创作者',
+                              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                color: Colors.grey,
+                                fontWeight: FontWeight.w500,
+                                fontVariations: [FontVariation('wght', 500.0)],
+                              ),
+                            );
+                          }
                         ),
                       ),
                     ],

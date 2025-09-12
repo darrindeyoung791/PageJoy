@@ -190,11 +190,16 @@ class _HomeScreenState extends State<HomeScreen> {
         
         return FlexibleSpaceBar(
           expandedTitleScale: 2,
-          title: Text(
-            title,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
+          title: Builder(
+            builder: (context) {
+              return Text(
+                title,
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  fontVariations: [FontVariation('wght', 700.0)],
+                ),
+              );
+            },
           ),
           titlePadding: EdgeInsets.only(
             left: 16 + safeAreaPadding.left,
@@ -297,16 +302,21 @@ class _ArticleFeedState extends State<ArticleFeed> {
                       borderRadius: BorderRadius.circular(8.0),
                       border: Border.all(color: Colors.orange),
                     ),
-                    child: const Row(
+                    child: Row(
                       children: [
-                        Icon(Icons.wifi_off, color: Colors.orange),
-                        SizedBox(width: 8),
-                        Text(
-                          '离线模式 - 显示示例内容',
-                          style: TextStyle(
-                            color: Colors.orange,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        const Icon(Icons.wifi_off, color: Colors.orange),
+                        const SizedBox(width: 8),
+                        Builder(
+                          builder: (context) {
+                            return Text(
+                              '离线模式 - 显示示例内容',
+                              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                                color: Colors.orange,
+                                fontWeight: FontWeight.w500,
+                                fontVariations: [FontVariation('wght', 500.0)],
+                              ),
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -344,16 +354,21 @@ class _ArticleFeedState extends State<ArticleFeed> {
                 borderRadius: BorderRadius.circular(8.0),
                 border: Border.all(color: Colors.orange),
               ),
-              child: const Row(
+              child: Row(
                 children: [
-                  Icon(Icons.wifi_off, color: Colors.orange),
-                  SizedBox(width: 8),
-                  Text(
-                    '离线模式 - 显示示例内容',
-                    style: TextStyle(
-                      color: Colors.orange,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  const Icon(Icons.wifi_off, color: Colors.orange),
+                  const SizedBox(width: 8),
+                  Builder(
+                    builder: (context) {
+                      return Text(
+                        '离线模式 - 显示示例内容',
+                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                          color: Colors.orange,
+                          fontWeight: FontWeight.w500,
+                          fontVariations: [FontVariation('wght', 500.0)],
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
@@ -375,12 +390,23 @@ class _ArticleFeedState extends State<ArticleFeed> {
         children: [
           const Icon(Icons.error, size: 48, color: Colors.red),
           const SizedBox(height: 16),
-          const Text(
-            '加载文章失败',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          Builder(
+            builder: (context) {
+              return Text(
+                '加载文章失败',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+              );
+            }
           ),
           const SizedBox(height: 8),
-          const Text('请检查您的网络连接'),
+          Builder(
+            builder: (context) {
+              return Text(
+                '请检查您的网络连接',
+                style: Theme.of(context).textTheme.bodyMedium,
+              );
+            }
+          ),
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () {
@@ -473,24 +499,32 @@ class _HeadlineCarouselState extends State<HeadlineCarousel> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            article.title,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            '创作者 • ${article.createdAt.day}/${article.createdAt.month}/${article.createdAt.year}',
-                            style: const TextStyle(
-                              color: Colors.white70,
-                              fontSize: 14,
-                            ),
-                          ),
+                              Builder(
+                                builder: (context) {
+                                  return Text(
+                                    article.title,
+                                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  );
+                                }
+                              ),
+                              const SizedBox(height: 8),
+                              Builder(
+                                builder: (context) {
+                                  return Text(
+                                    '创作者 • ${article.createdAt.day}/${article.createdAt.month}/${article.createdAt.year}',
+                                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                      color: Colors.white70,
+                                      fontWeight: FontWeight.w500,
+                                      fontVariations: [FontVariation('wght', 500.0)],
+                                    ),
+                                  );
+                                }
+                              ),
                         ],
                       ),
                     ),

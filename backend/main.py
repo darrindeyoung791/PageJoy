@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from models import models
 from database import engine, SessionLocal
 from routers import users, articles, magazines, subscription_plans, user_subscriptions, payments, likes, follows
@@ -7,6 +8,15 @@ from routers import users, articles, magazines, subscription_plans, user_subscri
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="PageJoy API", description="API for PageJoy application", version="0.1.0")
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # In production, replace with specific origins
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Include routers
 app.include_router(users.router)
