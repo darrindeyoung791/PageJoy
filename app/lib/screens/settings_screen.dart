@@ -240,6 +240,41 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 const SizedBox(height: 16),
                 Text(
+                  '感谢以下图片作者为本项目提供的精美动物图片：',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '• 羚羊 (Antelope) - Amy Chung (https://www.pexels.com/zh-cn/@amy-chung-209788/)\n'
+                  '• 美洲野牛 (Bison) - Chaitaastic (https://www.pexels.com/zh-cn/@chaitaastic/)\n'
+                  '• 美洲狮 (Cougar) - Lucas Pezeta (https://www.pexels.com/zh-cn/@lucaspezeta/)\n'
+                  '• 海豚 (Dolphin) - Hamid Elbaz (https://www.pexels.com/zh-cn/@hamid-elbaz-62178/)\n'
+                  '• 大象 (Elephant) - Hsapir (https://www.pexels.com/zh-cn/@hsapir/)\n'
+                  '• 猎鹰 (Falcon) - Co Sch (https://www.pexels.com/zh-cn/@co-sch-48159/)\n'
+                  '• 长颈鹿 (Giraffe) - Pixabay (https://www.pexels.com/zh-cn/@pixabay/)\n'
+                  '• 刺猬 (Hedgehog) - Pixabay (https://www.pexels.com/zh-cn/@pixabay/)\n'
+                  '• 鬣蜥 (Iguana) - Gina Jie Sam Foek (https://www.pexels.com/zh-cn/@gina-jie-sam-foek-126882/)\n'
+                  '• 美洲豹 (Jaguar) - Yigithan Ozturk (https://www.pexels.com/zh-cn/@yigithan02/)\n'
+                  '• 考拉 (Koala) - Pixabay (https://www.pexels.com/zh-cn/@pixabay/)\n'
+                  '• 狐猴 (Lemur) - Magda Ehlers (https://www.pexels.com/zh-cn/@magda-ehlers-pexels/)\n'
+                  '• 海牛 (Manatee) - Jakub Pabis (https://www.pexels.com/zh-cn/@jakub-pabis-147246622/)\n'
+                  '• 夜莺 (Nightingale) - Guvo59 (https://www.pexels.com/zh-cn/@guvo59/)\n'
+                  '• 水獭 (Otter) - Pixabay (https://www.pexels.com/zh-cn/@pixabay/)\n'
+                  '• 熊猫 (Panda) - Diana Silaraja (https://www.pexels.com/zh-cn/@diana-silaraja-794257/)\n'
+                  '• 鹌鹑 (Quail) - Brett Sayles (https://www.pexels.com/zh-cn/@brett-sayles/)\n'
+                  '• 浣熊 (Raccoon) - Pixabay (https://www.pexels.com/zh-cn/@pixabay/)\n'
+                  '• 蜘蛛 (Spider) - Pixabay (https://www.pexels.com/zh-cn/@pixabay/)\n'
+                  '• 巨嘴鸟 (Toucan) - Ekaterina (https://www.pexels.com/zh-cn/@ekamelev/)\n'
+                  '• 独角兽 (Unicorn) - Karolina Grabowska (https://www.pexels.com/zh-cn/@karolina-grabowska/)\n'
+                  '• 秃鹫 (Vulture) - Harry Letté (https://www.pexels.com/zh-cn/@harry-lette-1201293/)\n'
+                  '• 海象 (Walrus) - Francesco Ungaro (https://www.pexels.com/zh-cn/@francesco-ungaro/)\n'
+                  '• 非洲地松鼠 (Xerus) - Charles Durand (https://www.pexels.com/zh-cn/@charldurand/)\n'
+                  '• 牦牛 (Yak) - Liam Gant (https://www.pexels.com/zh-cn/@liam-gant-619294/)\n'
+                  '• 斑马 (Zebra) - Pixabay (https://www.pexels.com/zh-cn/@pixabay/)',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+                const SizedBox(height: 16),
+                Text(
                   '使用说明',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
