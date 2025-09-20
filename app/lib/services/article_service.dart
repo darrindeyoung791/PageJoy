@@ -5,7 +5,7 @@ import 'api_service.dart';
 
 class ArticleService {
   // Flag to simulate offline mode
-  static bool _isOffline = false;
+  static bool _isOffline = true;
   
   static void setOfflineMode(bool offline) {
     _isOffline = offline;

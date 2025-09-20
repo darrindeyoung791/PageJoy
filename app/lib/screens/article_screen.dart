@@ -106,7 +106,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
           expandedTitleScale: 1.5,
           title: Text(
             widget.article.title,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
               fontVariations: [FontVariation('wght', 700.0)], // 保持粗体效果
             ),
@@ -139,7 +139,7 @@ class _ArticleHeader extends StatelessWidget {
         children: [
           Text(
             article.title,
-            style: textTheme.displaySmall?.copyWith(
+            style: textTheme.headlineMedium?.copyWith(
               fontWeight: FontWeight.bold,
               fontVariations: [FontVariation('wght', 700.0)], // 保持粗体效果
             ),
@@ -147,14 +147,14 @@ class _ArticleHeader extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             '日期: ${article.createdAt.year}-${article.createdAt.month}-${article.createdAt.day}',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
               fontWeight: FontWeight.w500,
               fontVariations: [FontVariation('wght', 500.0)],
             ),
           ),
           Text(
             '作者: John Doe', // TODO: Replace with actual author name
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
               fontWeight: FontWeight.w500,
               fontVariations: [FontVariation('wght', 500.0)],
             ),
@@ -184,14 +184,14 @@ class _ArticleHeaderWithoutTitle extends StatelessWidget {
         children: [
           Text(
             '日期: ${article.createdAt.year}-${article.createdAt.month}-${article.createdAt.day}',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
               fontWeight: FontWeight.w500,
               fontVariations: [FontVariation('wght', 500.0)],
             ),
           ),
           Text(
             '作者: John Doe', // TODO: Replace with actual author name
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
               fontWeight: FontWeight.w500,
               fontVariations: [FontVariation('wght', 500.0)],
             ),
@@ -234,7 +234,7 @@ class _ArticleSummary extends StatelessWidget {
             children: [
               Text(
                 'AI 摘要',
-                style: textTheme.headlineSmall?.copyWith(
+                style: textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                   fontVariations: [FontVariation('wght', 700.0)], // 保持粗体效果
                 ),
@@ -245,7 +245,7 @@ class _ArticleSummary extends StatelessWidget {
                   Expanded(
                     child: Text(
                       aiSummary!,
-                      style: textTheme.titleLarge?.copyWith(
+                      style: textTheme.titleMedium?.copyWith(
                         fontVariations: [FontVariation('wght', 500.0)], // 使用与主题一致的字重
                       ),
                       textAlign: TextAlign.left, // 修改为左对齐
@@ -273,7 +273,7 @@ class _ArticleContent extends StatelessWidget {
       padding: const EdgeInsets.all(16.0),
       child: Text(
         article.content,
-        style: textTheme.titleLarge?.copyWith(
+        style: textTheme.titleMedium?.copyWith(
           fontVariations: [FontVariation('wght', 500.0)], // 使用与主题一致的字重
         ),
       ),

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../models/article.dart';
 import '../services/article_service.dart';
 import '../widgets/article_card.dart';
+import '../widgets/article_skeleton.dart'; // Import skeleton loader
+import '../widgets/profile_content.dart'; // Import ProfileContent
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -12,7 +14,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
-  bool _isOffline = false;
+  bool _isOffline = true;
 
   void _toggleOfflineMode() {
     setState(() {
@@ -83,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   collapsedHeight: 60,
                   floating: false,
                   pinned: true,
-                  flexibleSpace: _buildFlexibleSpaceBar('PageJoy'),
+                  flexibleSpace: _buildFlexibleSpaceBar(),
                   actions: [
                     IconButton(
                       icon: Icon(_isOffline ? Icons.wifi_off : Icons.wifi),
@@ -120,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
             collapsedHeight: 60, // 折叠高度
             floating: false,       // 允许向下滚动时重新显示
             pinned: true,        // 完全隐藏
-            flexibleSpace: _buildFlexibleSpaceBar('PageJoy'),
+            flexibleSpace: _buildFlexibleSpaceBar(),
             actions: [
               IconButton(
                 icon: Icon(_isOffline ? Icons.wifi_off : Icons.wifi),
@@ -182,7 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Widget _buildFlexibleSpaceBar(String title) {
+  Widget _buildFlexibleSpaceBar() {
     return Builder(
       builder: (BuildContext context) {
         // 获取安全区域边距
@@ -190,17 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
         
         return FlexibleSpaceBar(
           expandedTitleScale: 2,
-          title: Builder(
-            builder: (context) {
-              return Text(
-                title,
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  fontVariations: [FontVariation('wght', 700.0)],
-                ),
-              );
-            },
-          ),
+          title: const Text('PageJoy'), // 恢复标题显示
           titlePadding: EdgeInsets.only(
             left: 16 + safeAreaPadding.left,
             bottom: 16,
@@ -239,9 +231,7 @@ class _ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('我的'),
-    );
+    return const ProfileContent();
   }
 }
 
@@ -280,7 +270,8 @@ class _ArticleFeedState extends State<ArticleFeed> {
       future: _articlesFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          // Use skeleton loader instead of circular progress indicator
+          return const ArticleSkeletonList();
         } else if (snapshot.hasError) {
           return _buildErrorContent();
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -310,7 +301,7 @@ class _ArticleFeedState extends State<ArticleFeed> {
                           builder: (context) {
                             return Text(
                               '离线模式 - 显示示例内容',
-                              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                              style: Theme.of(context).textTheme.labelMedium?.copyWith(
                                 color: Colors.orange,
                                 fontWeight: FontWeight.w500,
                                 fontVariations: [FontVariation('wght', 500.0)],
@@ -359,17 +350,17 @@ class _ArticleFeedState extends State<ArticleFeed> {
                   const Icon(Icons.wifi_off, color: Colors.orange),
                   const SizedBox(width: 8),
                   Builder(
-                    builder: (context) {
-                      return Text(
-                        '离线模式 - 显示示例内容',
-                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                          color: Colors.orange,
-                          fontWeight: FontWeight.w500,
-                          fontVariations: [FontVariation('wght', 500.0)],
+                          builder: (context) {
+                            return Text(
+                              '离线模式 - 显示示例内容',
+                              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                color: Colors.orange,
+                                fontWeight: FontWeight.w500,
+                                fontVariations: [FontVariation('wght', 500.0)],
+                              ),
+                            );
+                          },
                         ),
-                      );
-                    },
-                  ),
                 ],
               ),
             ),
@@ -394,7 +385,7 @@ class _ArticleFeedState extends State<ArticleFeed> {
             builder: (context) {
               return Text(
                 '加载文章失败',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
               );
             }
           ),
@@ -403,7 +394,7 @@ class _ArticleFeedState extends State<ArticleFeed> {
             builder: (context) {
               return Text(
                 '请检查您的网络连接',
-                style: Theme.of(context).textTheme.bodyMedium,
+                style: Theme.of(context).textTheme.bodySmall,
               );
             }
           ),
@@ -417,6 +408,20 @@ class _ArticleFeedState extends State<ArticleFeed> {
             child: const Text('重试'),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class ArticleSkeletonList extends StatelessWidget {
+  const ArticleSkeletonList({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: List.generate(
+        5,
+        (index) => const ArticleSkeleton(),
       ),
     );
   }
@@ -503,7 +508,7 @@ class _HeadlineCarouselState extends State<HeadlineCarousel> {
                                 builder: (context) {
                                   return Text(
                                     article.title,
-                                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
                                       fontWeight: FontWeight.bold,
                                       color: Colors.white,
                                     ),
@@ -517,7 +522,7 @@ class _HeadlineCarouselState extends State<HeadlineCarousel> {
                                 builder: (context) {
                                   return Text(
                                     '创作者 • ${article.createdAt.day}/${article.createdAt.month}/${article.createdAt.year}',
-                                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
                                       color: Colors.white70,
                                       fontWeight: FontWeight.w500,
                                       fontVariations: [FontVariation('wght', 500.0)],
