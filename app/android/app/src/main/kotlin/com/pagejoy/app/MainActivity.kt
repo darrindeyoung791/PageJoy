@@ -1,5 +1,6 @@
-package com.example.app
+package com.pagejoy.app
 
 import io.flutter.embedding.android.FlutterActivity
+
 
 class MainActivity: FlutterActivity()

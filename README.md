@@ -91,6 +91,67 @@ start_dev.bat
 这将同时启动后端和前端开发服务器。
 
 
+## 版本号规则
+
+PageJoy 使用独特的动物代号版本系统，为每个版本分配一个动物名称，使版本更容易记忆和识别。
+
+### 版本格式
+
+版本号遵循 `MAJOR.MINOR.PATCH-ANIMAL_CODENAME+BUILD` 的格式：
+
+- `MAJOR`: 主版本号，重大更新时递增
+- `MINOR`: 次版本号，功能更新时递增
+- `PATCH`: 补丁版本号，用于 bug 修复，从 1 开始递增
+- `ANIMAL_CODENAME`: 动物代号，根据补丁版本号映射到对应的动物名称
+- `BUILD`: 构建号，用于标识具体的构建版本
+
+### 动物代号映射规则
+
+补丁版本号与动物代号的映射关系为首字母顺序对应数字 1-26：
+
+| 字母 | 动物单词    | 中文释义   | 照片作者（Pexels页面）                                  |
+| ---- | ----------- | ---------- | ------------------------------------------------------- |
+| A    | Antelope    | 羚羊       | https://www.pexels.com/zh-cn/@amy-chung-209788/         |
+| B    | Bison       | 美洲野牛   | https://www.pexels.com/zh-cn/@chaitaastic/              |
+| C    | Cougar      | 美洲狮     | https://www.pexels.com/zh-cn/@lucaspezeta/              |
+| D    | Dolphin     | 海豚       | https://www.pexels.com/zh-cn/@hamid-elbaz-62178/        |
+| E    | Elephant    | 大象       | https://www.pexels.com/zh-cn/@hsapir/                   |
+| F    | Falcon      | 猎鹰       | https://www.pexels.com/zh-cn/@co-sch-48159/             |
+| G    | Giraffe     | 长颈鹿     | https://www.pexels.com/zh-cn/@pixabay/                  |
+| H    | Hedgehog    | 刺猬       | https://www.pexels.com/zh-cn/@pixabay/                  |
+| I    | Iguana      | 鬣蜥       | https://www.pexels.com/zh-cn/@gina-jie-sam-foek-126882/ |
+| J    | Jaguar      | 美洲豹     | https://www.pexels.com/zh-cn/@yigithan02/               |
+| K    | Koala       | 考拉       | https://www.pexels.com/zh-cn/@pixabay/                  |
+| L    | Lemur       | 狐猴       | https://www.pexels.com/zh-cn/@magda-ehlers-pexels/      |
+| M    | Manatee     | 海牛       | https://www.pexels.com/zh-cn/@jakub-pabis-147246622/    |
+| N    | Nightingale | 夜莺       | https://www.pexels.com/zh-cn/@guvo59/                   |
+| O    | Otter       | 水獭       | https://www.pexels.com/zh-cn/@pixabay/                  |
+| P    | Panda       | 熊猫       | https://www.pexels.com/zh-cn/@diana-silaraja-794257/    |
+| Q    | Quail       | 鹌鹑       | https://www.pexels.com/zh-cn/@brett-sayles/             |
+| R    | Raccoon     | 浣熊       | https://www.pexels.com/zh-cn/@pixabay/                  |
+| S    | Spider      | 蜘蛛       | https://www.pexels.com/zh-cn/@pixabay/                  |
+| T    | Toucan      | 巨嘴鸟     | https://www.pexels.com/zh-cn/@ekamelev/                 |
+| U    | Unicorn     | 独角兽     | https://www.pexels.com/zh-cn/@karolina-grabowska/       |
+| V    | Vulture     | 秃鹫       | https://www.pexels.com/zh-cn/@harry-lette-1201293/      |
+| W    | Walrus      | 海象       | https://www.pexels.com/zh-cn/@francesco-ungaro/         |
+| X    | Xerus       | 非洲地松鼠 | https://www.pexels.com/zh-cn/@charldurand/              |
+| Y    | Yak         | 牦牛       | https://www.pexels.com/zh-cn/@liam-gant-619294/         |
+| Z    | Zebra       | 斑马       | https://www.pexels.com/zh-cn/@pixabay/                  |
+
+例如，当前版本为 `0.0.1-antelope+1`，表示：
+- 主版本号: 0
+- 次版本号: 0
+- 补丁版本号: 1 (对应动物代号: antelope 羚羊)
+- 构建号: 1
+
+### 实现方式
+
+动物代号版本系统通过 `app/lib/utils/animal_version.dart` 文件实现，该工具类负责：
+1. 维护补丁版本号与动物代号的映射关系
+2. 解析应用版本字符串中的补丁版本号
+3. 获取对应的动物代号
+4. 提供格式化的版本显示信息
+
 ## 数据库表结构汇总
 
 - 使用 sqlite 存放数据

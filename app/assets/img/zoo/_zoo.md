@@ -1,0 +1,30 @@
+# THE ZOO
+
+| 字母 | 动物单词    | 中文释义   | 照片作者（Pexels页面）                                  |
+| ---- | ----------- | ---------- | ------------------------------------------------------- |
+| A    | Antelope    | 羚羊       | https://www.pexels.com/zh-cn/@amy-chung-209788/         |
+| B    | Bison       | 美洲野牛   | https://www.pexels.com/zh-cn/@chaitaastic/              |
+| C    | Cougar      | 美洲狮     | https://www.pexels.com/zh-cn/@lucaspezeta/              |
+| D    | Dolphin     | 海豚       | https://www.pexels.com/zh-cn/@hamid-elbaz-62178/        |
+| E    | Elephant    | 大象       | https://www.pexels.com/zh-cn/@hsapir/                   |
+| F    | Falcon      | 猎鹰       | https://www.pexels.com/zh-cn/@co-sch-48159/             |
+| G    | Giraffe     | 长颈鹿     | https://www.pexels.com/zh-cn/@pixabay/                  |
+| H    | Hedgehog    | 刺猬       | https://www.pexels.com/zh-cn/@pixabay/                  |
+| I    | Iguana      | 鬣蜥       | https://www.pexels.com/zh-cn/@gina-jie-sam-foek-126882/ |
+| J    | Jaguar      | 美洲豹     | https://www.pexels.com/zh-cn/@yigithan02/               |
+| K    | Koala       | 考拉       | https://www.pexels.com/zh-cn/@pixabay/                  |
+| L    | Lemur       | 狐猴       | https://www.pexels.com/zh-cn/@magda-ehlers-pexels/      |
+| M    | Manatee     | 海牛       | https://www.pexels.com/zh-cn/@jakub-pabis-147246622/    |
+| N    | Nightingale | 夜莺       | https://www.pexels.com/zh-cn/@guvo59/                   |
+| O    | Otter       | 水獭       | https://www.pexels.com/zh-cn/@pixabay/                  |
+| P    | Panda       | 熊猫       | https://www.pexels.com/zh-cn/@diana-silaraja-794257/    |
+| Q    | Quail       | 鹌鹑       | https://www.pexels.com/zh-cn/@brett-sayles/             |
+| R    | Raccoon     | 浣熊       | https://www.pexels.com/zh-cn/@pixabay/                  |
+| S    | Spider      | 蜘蛛       | https://www.pexels.com/zh-cn/@pixabay/                  |
+| T    | Toucan      | 巨嘴鸟     | https://www.pexels.com/zh-cn/@ekamelev/                 |
+| U    | Unicorn     | 独角兽     | https://www.pexels.com/zh-cn/@karolina-grabowska/       |
+| V    | Vulture     | 秃鹫       | https://www.pexels.com/zh-cn/@harry-lette-1201293/      |
+| W    | Walrus      | 海象       | https://www.pexels.com/zh-cn/@francesco-ungaro/         |
+| X    | Xerus       | 非洲地松鼠 | https://www.pexels.com/zh-cn/@charldurand/              |
+| Y    | Yak         | 牦牛       | https://www.pexels.com/zh-cn/@liam-gant-619294/         |
+| Z    | Zebra       | 斑马       | https://www.pexels.com/zh-cn/@pixabay/                  |

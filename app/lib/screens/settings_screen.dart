@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // For FontVariation
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/api_service.dart';
+import '../utils/animal_version.dart';
 
 class SettingsScreen extends StatefulWidget {
   final Function(ThemeMode)? updateThemeMode;
@@ -211,11 +212,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                 ),
                 const SizedBox(height: 16),
-                ListTile(
-                  title: const Text('版本信息'),
-                  subtitle: const Text('PageJoy v1.0.0'),
-                  onTap: () {
-                    // TODO: Show version info dialog
+                // 版本信息 - 放在关于标题正下方
+                FutureBuilder<String>(
+                  future: AnimalVersion.getDisplayVersion(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return ListTile(
+                        title: const Text('版本信息'),
+                        subtitle: Text(snapshot.data!),
+                      );
+                    } else {
+                      return const ListTile(
+                        title: Text('版本信息'),
+                        subtitle: Text('加载中...'),
+                      );
+                    }
                   },
                 ),
                 const SizedBox(height: 16),

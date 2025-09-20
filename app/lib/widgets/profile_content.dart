@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ProfileContent extends StatelessWidget {
   const ProfileContent({super.key});
@@ -73,7 +74,9 @@ class _ProfileHeader extends StatelessWidget {
                       children: [
                         const CircleAvatar(
                           radius: 50,
-                          backgroundImage: NetworkImage('https://via.placeholder.com/100'),
+                          backgroundImage: CachedNetworkImageProvider(
+                            'https://via.placeholder.com/100',
+                          ),
                         ),
                         const SizedBox(width: 16),
                         Expanded(
@@ -111,9 +114,11 @@ class _ProfileHeader extends StatelessWidget {
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
                   children: [
-                    const CircleAvatar(
+                    CircleAvatar(
                       radius: 50,
-                      backgroundImage: NetworkImage('https://via.placeholder.com/100'),
+                      backgroundImage: CachedNetworkImageProvider(
+                        'https://via.placeholder.com/100',
+                      ),
                     ),
                     const SizedBox(width: 16),
                     Expanded(

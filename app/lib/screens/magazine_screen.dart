@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class MagazineScreen extends StatelessWidget {
   const MagazineScreen({super.key});
@@ -30,9 +31,11 @@ class _MagazineHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 200,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         image: DecorationImage(
-          image: NetworkImage('https://via.placeholder.com/400x200'),
+          image: CachedNetworkImageProvider(
+            'https://via.placeholder.com/400x200',
+          ),
           fit: BoxFit.cover,
         ),
       ),
