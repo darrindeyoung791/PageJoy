@@ -187,16 +187,23 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildFlexibleSpaceBar() {
     return Builder(
       builder: (BuildContext context) {
+        // 获取屏幕尺寸信息
+        final Size screenSize = MediaQuery.of(context).size;
+        final bool isLandscape = screenSize.width > screenSize.height;
         // 获取安全区域边距
         final EdgeInsets safeAreaPadding = MediaQuery.of(context).padding;
+        
+        // 在横屏模式下不使用安全区域边距，因为Navigation Rail已经处理了
+        final double leftPadding = isLandscape ? 16.0 : 16.0 + safeAreaPadding.left;
+        final double rightPadding = isLandscape ? 16.0 : 16.0 + safeAreaPadding.right;
         
         return FlexibleSpaceBar(
           expandedTitleScale: 2,
           title: const Text('PageJoy'), // 恢复标题显示
           titlePadding: EdgeInsets.only(
-            left: 16 + safeAreaPadding.left,
+            left: leftPadding,
             bottom: 16,
-            right: 16 + safeAreaPadding.right,
+            right: rightPadding,
           ),
         );
       },
