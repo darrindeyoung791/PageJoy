@@ -77,7 +77,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               children: [
                 Text(
                   'API 设置',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                         fontVariations: [FontVariation('wght', 700.0)],
                       ),
