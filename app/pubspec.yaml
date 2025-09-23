@@ -52,6 +52,7 @@ dependencies:
   
   # For getting app version info
   package_info_plus: ^8.0.0
+  dynamic_color: 1.6.8
 
 dev_dependencies:
   flutter_test:

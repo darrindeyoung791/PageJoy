@@ -55,8 +55,8 @@ class _HomeScreenState extends State<HomeScreen> {
               });
             },
             labelType: NavigationRailLabelType.all,
-            backgroundColor: Theme.of(context).colorScheme.surfaceContainer, // 直接设置背景色
-            elevation: 1, // 添加阴影效果
+            // 移除背景色设置以避免视觉上的边缘线
+            // 移除elevation设置以避免断言错误
             destinations: const [
               NavigationRailDestination(
                 icon: Icon(Icons.home_outlined),
@@ -289,7 +289,7 @@ class _ArticleFeedState extends State<ArticleFeed> {
                     margin: const EdgeInsets.all(16.0),
                     padding: const EdgeInsets.all(12.0),
                     decoration: BoxDecoration(
-                      color: Colors.orange.withOpacity(0.2),
+                      color: Colors.orange.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(8.0),
                       border: Border.all(color: Colors.orange),
                     ),
@@ -341,7 +341,7 @@ class _ArticleFeedState extends State<ArticleFeed> {
               margin: const EdgeInsets.all(16.0),
               padding: const EdgeInsets.all(12.0),
               decoration: BoxDecoration(
-                color: Colors.orange.withOpacity(0.2),
+                color: Colors.orange.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(8.0),
                 border: Border.all(color: Colors.orange),
               ),
@@ -494,7 +494,7 @@ class _HeadlineCarouselState extends State<HeadlineCarousel> {
                         end: Alignment.bottomCenter,
                         colors: [
                           Colors.transparent,
-                          Colors.black.withOpacity(0.7),
+                          Colors.black.withValues(alpha: 0.7),
                         ],
                       ),
                     ),
@@ -552,7 +552,7 @@ class _HeadlineCarouselState extends State<HeadlineCarousel> {
                   margin: const EdgeInsets.symmetric(horizontal: 4),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: _currentPage == index ? Colors.white : Colors.white.withOpacity(0.5),
+                    color: _currentPage == index ? Colors.white : Colors.white.withValues(alpha: 0.5),
                   ),
                 );
               }),

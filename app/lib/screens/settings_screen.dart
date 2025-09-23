@@ -67,8 +67,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
+      body: SafeArea(
+        // 添加最小边距以确保在所有设备上都有适当的间距，特别是在刘海屏和横屏模式下
+        minimum: const EdgeInsets.all(8.0),
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Form(
             key: _formKey,

@@ -8,8 +8,6 @@ class ProfileContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final bool isWideScreen = constraints.maxWidth > 600;
-        
         return SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center, // 水平居中
@@ -35,9 +33,7 @@ class _ProfileOptionsConditional extends StatelessWidget {
     // 这里需要通过父级传递屏幕宽度信息，或者使用MediaQuery来判断
     return LayoutBuilder(
       builder: (context, constraints) {
-        final bool isWideScreen = constraints.maxWidth > 600;
-        
-        if (isWideScreen) {
+        if (constraints.maxWidth > 600) {
           // 横屏模式下不显示，因为选项已经在_ProfileHeader中显示
           return const SizedBox.shrink();
         } else {
@@ -59,8 +55,8 @@ class _ProfileHeader extends StatelessWidget {
         final bool isWideScreen = constraints.maxWidth > 600;
         
         if (isWideScreen) {
-          // 横屏模式：完整卡片
-          return Card(
+          // 横屏模式：不使用卡片样式，保持原有布局
+          return Container(
             margin: EdgeInsets.zero,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,9 +102,9 @@ class _ProfileHeader extends StatelessWidget {
             ),
           );
         } else {
-          // 竖屏模式：居中卡片，接近屏幕宽度
+          // 竖屏模式：不使用卡片样式，保持居中布局
           return Center(
-            child: Card(
+            child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
