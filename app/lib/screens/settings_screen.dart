@@ -169,14 +169,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     // Call the callback to update dynamic color setting in main app
                     widget.updateDynamicColor?.call(value);
                     // Show a message that the app needs to be restarted
-                    if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('重启应用以应用动态颜色设置'),
-                          duration: Duration(seconds: 2),
-                        ),
-                      );
-                    }
                   },
                 ),
                 const SizedBox(height: 16),

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- 1. 真正的 Splash 主题 -->
+    <style name="Theme.MyApp.Starting" parent="Theme.SplashScreen">
+        <!-- 窗口背景色，可按品牌色修改 -->
+        <item name="windowSplashScreenBackground">#FFFFFF</item>
+
+        <!-- 中心图标：Android 12 及以上有效 -->
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_icon</item>
+
+        <!-- 图标静止时长（毫秒）-->
+        <item name="windowSplashScreenAnimationDuration">500</item>
+
+        <!-- 退出动画与 Activity 主题无缝衔接 -->
+        <item name="postSplashScreenTheme">@style/Theme.AppCompat.DayNight.NoActionBar</item>
+    </style>
+</resources>
