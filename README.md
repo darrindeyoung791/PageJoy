@@ -11,7 +11,7 @@
 
 - [Planned] Splash screen
 - 主页
-    - 推送瀑布流页面，类似小红书的布局
+    - 推送瀑布流页面，自适应界面
     - 收藏页面，存放用户点过红心的文章和关注的创作者
     - 个人页面，展示用户信息，会员订阅状态，历史记录和[Panned]设置
     - 上述三个单独页面可以通过 Material Design 中的 navigation rail（桌面横屏端）/navigation bar（移动竖屏端）切换
