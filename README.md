@@ -1,4 +1,4 @@
-# PageJoy 悦阅：沉浸式电子杂志
+# PageJoy：沉浸式电子杂志
 
 - 极简界面布局，助用户全身心专注于文字阅览本身
 - 多端支持，为各种尺寸的桌面端和移动端适配界面
@@ -7,7 +7,7 @@
 
 ## 页面与功能列表
 
-- 使用 Flutter 创建符合 Material Design 3 的美观单页应用。中文字体使用 Noto Sans SC，英文使用 Lato
+- 使用 Flutter 创建符合 Material Design 3 的美观阅读应用。中文字体使用 Noto Sans SC，英文使用 Lato
 
 - [Planned] Splash screen
 - 主页
