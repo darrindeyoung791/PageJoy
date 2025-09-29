@@ -223,9 +223,16 @@ class _ArticleSummary extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Card(
-        elevation: 4,
+        // 移除阴影效果
+        elevation: 0,
+        // 使用surfaceContainerLow颜色来创建与背景的轻微区分
+        color: Theme.of(context).colorScheme.surfaceContainerLow,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
+          side: BorderSide(
+            color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.1),
+            width: 0.5,
+          ),
         ),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
