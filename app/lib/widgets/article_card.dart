@@ -11,8 +11,8 @@ class ArticleCard extends StatelessWidget {
     return Card(
       // 移除阴影效果
       elevation: 0,
-      // 使用surfaceContainerLow颜色来创建与背景的轻微区分
-      color: Theme.of(context).colorScheme.surfaceContainerLow,
+      // 使用surfaceContainer颜色来创建与背景的更好区分（在所有平台上都有更好的可见性）
+      color: Theme.of(context).colorScheme.surfaceContainer,
       child: InkWell(
         onTap: () {
           Navigator.pushNamed(
@@ -27,7 +27,7 @@ class ArticleCard extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.1),
+              color: Theme.of(context).colorScheme.outline,
               width: 0.5,
             ),
           ),
