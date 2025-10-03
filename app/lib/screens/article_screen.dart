@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // For FontVariation
+import 'package:provider/provider.dart';
 import '../models/article.dart';
+import '../services/article_service.dart';
+import '../services/user_provider.dart';
 
 class ArticleScreen extends StatefulWidget {
   final Article article;
@@ -12,6 +15,81 @@ class ArticleScreen extends StatefulWidget {
 }
 
 class _ArticleScreenState extends State<ArticleScreen> {
+  bool _isFavorited = false;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkIfFavorited();
+  }
+
+  Future<void> _checkIfFavorited() async {
+    final userProvider = context.read<UserProvider>();
+    if (userProvider.user == null) {
+      // 用户未登录，无法检查收藏状态
+      return;
+    }
+    
+    final userId = userProvider.user!.id;
+    
+    try {
+      final isFavorited = await ArticleService.isArticleFavorited(userId, widget.article.id);
+      setState(() {
+        _isFavorited = isFavorited;
+      });
+    } catch (e) {
+      print('检查收藏状态失败: $e');
+    }
+  }
+
+  Future<void> _toggleFavorite() async {
+    if (_isLoading) return;
+    
+    final userProvider = context.read<UserProvider>();
+    if (userProvider.user == null) {
+      // 用户未登录，显示提示
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('请先登录以使用收藏功能')),
+      );
+      return;
+    }
+    
+    final userId = userProvider.user!.id;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      if (_isFavorited) {
+        // 取消收藏
+        await ArticleService.deleteFavorite(userId, 'article', widget.article.id);
+        userProvider.removeFavoriteArticle(widget.article.id);
+        setState(() {
+          _isFavorited = false;
+        });
+      } else {
+        // 添加收藏
+        await ArticleService.createFavorite(userId, articleId: widget.article.id);
+        userProvider.addFavoriteArticle(widget.article.id);
+        setState(() {
+          _isFavorited = true;
+        });
+      }
+    } catch (e) {
+      print('收藏操作失败: $e');
+      // 可以在这里显示错误提示
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('收藏操作失败: $e')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   Widget build(BuildContext context) {
     // Article screen should always use the same layout regardless of screen size or orientation
     // It should not show navigation rail or bottom navigation
@@ -74,10 +152,12 @@ class _ArticleScreenState extends State<ArticleScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // TODO: Implement like functionality
-        },
-        child: const Icon(Icons.favorite_border),
+        onPressed: _toggleFavorite,
+        backgroundColor: _isFavorited ? Colors.red : null,
+        child: _isLoading 
+          ? const CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Colors.white))
+          : Icon(_isFavorited ? Icons.favorite : Icons.favorite_border, 
+                 color: _isFavorited ? Colors.white : null),
       ),
     );
   }

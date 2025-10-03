@@ -5,6 +5,7 @@ import 'package:dynamic_color/dynamic_color.dart'; // For dynamic color support
 import 'screens/index.dart';
 import 'screens/font_test_screen.dart'; // Font test screen
 import 'services/user_provider.dart';
+import 'services/user_service.dart';
 import 'models/article.dart'; // Import Article model
 import 'services/api_service.dart'; // Import API service
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,9 +13,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await ApiService.init(); // Initialize API service
+  
+  // 检查用户登录状态并初始化UserProvider
+  final userProvider = UserProvider();
+  final currentUser = await UserService.getCurrentUser();
+  if (currentUser != null) {
+    userProvider.setUser(currentUser);
+  }
+  
   runApp(
     ChangeNotifierProvider(
-      create: (context) => UserProvider(),
+      create: (context) => userProvider,
       child: const MyApp(),
     ),
   );

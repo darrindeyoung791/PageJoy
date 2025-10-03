@@ -50,6 +50,7 @@ class User(Base):
     following = relationship("UserFollow", foreign_keys="[UserFollow.follower_id]", back_populates="follower")
     followers = relationship("UserFollow", foreign_keys="[UserFollow.followed_id]", back_populates="followed")
     likes = relationship("Like", back_populates="user")
+    favorites = relationship("Favorite", back_populates="user")
     subscriptions = relationship("UserSubscription", back_populates="user")
     payments = relationship("Payment", back_populates="user")
 
@@ -93,6 +94,7 @@ class Article(Base):
     writers = relationship("ArticleWriter", back_populates="article")
     magazines = relationship("MagazineArticle", back_populates="article")
     likes = relationship("Like", back_populates="article")
+    favorites = relationship("Favorite", back_populates="article")
 
 # Magazine Model
 class Magazine(Base):
@@ -112,6 +114,7 @@ class Magazine(Base):
     articles = relationship("MagazineArticle", back_populates="magazine")
     subscription_plan = relationship("SubscriptionPlan", back_populates="magazines")
     likes = relationship("Like", back_populates="magazine")
+    favorites = relationship("Favorite", back_populates="magazine")
 
 # ArticleWriter Model
 class ArticleWriter(Base):
@@ -159,6 +162,20 @@ class UserFollow(Base):
     # Relationships
     follower = relationship("User", foreign_keys=[follower_id], back_populates="following")
     followed = relationship("User", foreign_keys=[followed_id], back_populates="followers")
+
+# Favorite Model
+class Favorite(Base):
+    __tablename__ = "favorites"
+
+    user_id = Column(Integer, ForeignKey("user.id"), primary_key=True)
+    article_id = Column(Integer, ForeignKey("article.id"), nullable=True)
+    magazine_id = Column(Integer, ForeignKey("magazine.id"), nullable=True)
+    created_at = Column(DateTime, default=func.now(), nullable=False)
+
+    # Relationships
+    user = relationship("User", back_populates="favorites")
+    article = relationship("Article", back_populates="favorites")
+    magazine = relationship("Magazine", back_populates="favorites")
 
 # Like Model
 class Like(Base):

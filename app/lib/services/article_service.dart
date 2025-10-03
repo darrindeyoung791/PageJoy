@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 import '../models/article.dart';
+import '../models/favorite.dart';
 import 'api_service.dart';
 
 class ArticleService {
@@ -184,6 +185,68 @@ class ArticleService {
     
     if (response.statusCode != 200) {
       throw Exception('删除文章失败');
+    }
+  }
+
+  // 收藏相关的方法
+  static Future<Favorite> createFavorite(int userId, {int? articleId, int? magazineId}) async {
+    if (_isOffline) {
+      throw Exception('离线模式下无法收藏');
+    }
+    
+    final response = await ApiService.post('/favorites/', {
+      'user_id': userId,
+      'article_id': articleId,
+      'magazine_id': magazineId,
+    });
+    
+    if (response.statusCode == 200) {
+      return Favorite.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('收藏失败');
+    }
+  }
+
+  static Future<void> deleteFavorite(int userId, String contentType, int contentId) async {
+    if (_isOffline) {
+      throw Exception('离线模式下无法取消收藏');
+    }
+    
+    final response = await ApiService.delete('/favorites/$userId/$contentType/$contentId');
+    
+    if (response.statusCode != 200) {
+      throw Exception('取消收藏失败');
+    }
+  }
+
+  static Future<List<Article>> getUserFavoriteArticles(int userId) async {
+    if (_isOffline) {
+      // 在离线模式下返回空列表
+      return [];
+    }
+    
+    final response = await ApiService.get('/favorites/user/$userId/articles');
+    
+    if (response.statusCode == 200) {
+      final List<dynamic> articlesJson = json.decode(response.body);
+      return articlesJson.map((json) => Article.fromJson(json)).toList();
+    } else {
+      throw Exception('加载收藏文章失败');
+    }
+  }
+
+  static Future<bool> isArticleFavorited(int userId, int articleId) async {
+    if (_isOffline) {
+      // 离线模式下默认返回未收藏
+      return false;
+    }
+    
+    try {
+      final response = await ApiService.get('/favorites/$userId/article/$articleId');
+      return response.statusCode == 200;
+    } catch (e) {
+      // 如果请求失败（例如404），则表示未收藏
+      return false;
     }
   }
 }

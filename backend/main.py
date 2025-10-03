@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from models import models
 from database import engine, SessionLocal
-from routers import users, articles, magazines, subscription_plans, user_subscriptions, payments, likes, follows
+from routers import users, articles, magazines, subscription_plans, user_subscriptions, payments, likes, follows, favorites
 
 # 确保在创建表之前导入了所有模型
 models.Base.metadata.create_all(bind=engine)
@@ -26,6 +26,7 @@ app.include_router(subscription_plans.router)
 app.include_router(user_subscriptions.router)
 app.include_router(payments.router)
 app.include_router(likes.router)
+app.include_router(favorites.router)
 app.include_router(follows.router)
 
 @app.get("/")

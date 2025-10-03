@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/article.dart';
 import '../services/article_service.dart';
+import '../services/user_provider.dart';
 import '../widgets/article_card.dart';
 import '../widgets/article_skeleton.dart'; // Import skeleton loader
 import '../widgets/profile_content.dart'; // Import ProfileContent
@@ -222,13 +224,120 @@ class _HomeFeed extends StatelessWidget {
   }
 }
 
-class _FavoritesScreen extends StatelessWidget {
+class _FavoritesScreen extends StatefulWidget {
   const _FavoritesScreen();
 
   @override
+  State<_FavoritesScreen> createState() => _FavoritesScreenState();
+}
+
+class _FavoritesScreenState extends State<_FavoritesScreen> {
+  late Future<List<Article>> _favoritesFuture;
+  bool _isOffline = false; // 假设在线模式获取收藏
+
+  @override
+  void initState() {
+    super.initState();
+    _favoritesFuture = _loadFavorites();
+  }
+
+  Future<List<Article>> _loadFavorites() async {
+    final userProvider = context.read<UserProvider>();
+    if (userProvider.user == null) {
+      // 用户未登录，返回空列表
+      return [];
+    }
+    
+    try {
+      final userId = userProvider.user!.id;
+      return await ArticleService.getUserFavoriteArticles(userId);
+    } catch (e) {
+      print('加载收藏失败: $e');
+      return [];
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('收藏'),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('我的收藏'),
+      ),
+      body: FutureBuilder<List<Article>>(
+        future: _favoritesFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error, size: 48, color: Colors.red),
+                  const SizedBox(height: 16),
+                  Text('加载收藏失败: ${snapshot.error}'),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        _favoritesFuture = _loadFavorites();
+                      });
+                    },
+                    child: const Text('重试'),
+                  ),
+                ],
+              ),
+            );
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(
+              child: Text('暂无收藏内容'),
+            );
+          } else {
+            final articles = snapshot.data!;
+            return SingleChildScrollView(
+              physics: const ClampingScrollPhysics(), // 添加平滑滚动物理效果
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final crossAxisCount = constraints.maxWidth > 600 ? 2 : 1;
+                  
+                  return Column(
+                    children: List.generate(
+                      (articles.length / crossAxisCount).ceil(),
+                      (index) => Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0,
+                          vertical: 8.0,
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: ArticleCard(
+                                article: articles[index * crossAxisCount],
+                              ),
+                            ),
+                            if (crossAxisCount == 2 &&
+                                index * 2 + 1 < articles.length) ...[
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: ArticleCard(
+                                  article: articles[index * crossAxisCount + 1],
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            );
+          }
+        },
+      ),
     );
   }
 }

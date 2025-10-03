@@ -186,6 +186,24 @@ class Like(LikeBase):
     class Config:
         orm_mode = True
 
+# Favorite schemas
+class FavoriteBase(BaseModel):
+    user_id: int
+    article_id: Optional[int] = None
+    magazine_id: Optional[int] = None
+
+class FavoriteCreate(FavoriteBase):
+    pass
+
+class FavoriteUpdate(FavoriteBase):
+    pass
+
+class Favorite(FavoriteBase):
+    created_at: datetime
+
+    class Config:
+        orm_mode = True
+
 # User Follow schemas
 class UserFollowBase(BaseModel):
     follower_id: int

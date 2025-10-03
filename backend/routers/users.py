@@ -5,9 +5,19 @@ from database import get_db
 from models.models import User as UserModel
 from schemas.schemas import UserCreate, User, UserUpdate
 from passlib.context import CryptContext
+import jwt
+from datetime import datetime, timedelta
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 # Password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+# JWT settings
+SECRET_KEY = "your-secret-key-change-this-in-production"  # Should be in environment variables
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+security = HTTPBearer()
 
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -36,6 +46,22 @@ def create_user(db: Session, user: UserCreate):
     db.commit()
     db.refresh(db_user)
     return db_user
+
+def authenticate_user(db: Session, username: str, password: str):
+    user = get_user_by_username(db, username)
+    if not user or not verify_password(password, user.password_hash):
+        return None
+    return user
+
+def create_access_token(data: dict, expires_delta: timedelta = None):
+    to_encode = data.copy()
+    if expires_delta:
+        expire = datetime.utcnow() + expires_delta
+    else:
+        expire = datetime.utcnow() + timedelta(minutes=15)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
 
 @router.post("/", response_model=User)
 def create_user_endpoint(user: UserCreate, db: Session = Depends(get_db)):
@@ -78,3 +104,17 @@ def delete_user(user_id: int, db: Session = Depends(get_db)):
     db.delete(db_user)
     db.commit()
     return db_user
+
+@router.post("/login", response_model=User)
+def login_user(user_credentials: UserCreate, db: Session = Depends(get_db)):
+    user = authenticate_user(db, user_credentials.username, user_credentials.password)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    # Here we could create and return a JWT token
+    # For now, we'll just return the user info
+    return user
