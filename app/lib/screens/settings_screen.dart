@@ -69,7 +69,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       body: SafeArea(
         // 添加最小边距以确保在所有设备上都有适当的间距，特别是在刘海屏和横屏模式下
-        minimum: const EdgeInsets.all(8.0),
+        minimum: const EdgeInsets.only(top: 8.0, left: 8.0, right: 8.0, bottom: 8.0),
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Form(
@@ -109,9 +109,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 const SizedBox(height: 24),
                 Center(
-                  child: ElevatedButton(
-                    onPressed: _saveApiSettings,
-                    child: const Text('保存 API 设置'),
+                  child: SizedBox(
+                    width: 200, // 固定宽度以符合设计规范
+                    child: ElevatedButton(
+                      onPressed: _saveApiSettings,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                        elevation: 0, // 移除阴影
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12), // MD3推荐的圆角
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 16), // 增加按钮高度
+                      ),
+                      child: Text(
+                        '保存 API 设置',
+                        style: TextStyle(
+                          fontSize: 16, 
+                          fontWeight: FontWeight.w500,
+                          fontFamily: 'NotoSansSC', // 使用Noto Sans SC字体
+                        ),
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -225,11 +244,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 const SizedBox(height: 16),
                 Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // TODO: Implement feedback functionality
-                    },
-                    child: const Text('意见反馈'),
+                  child: SizedBox(
+                    width: 200, // 固定宽度以符合设计规范
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // TODO: Implement feedback functionality
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                        elevation: 0, // 移除阴影
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12), // MD3推荐的圆角
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 16), // 增加按钮高度
+                      ),
+                      child: Text(
+                        '意见反馈',
+                        style: TextStyle(
+                          fontSize: 16, 
+                          fontWeight: FontWeight.w500,
+                          fontFamily: 'NotoSansSC', // 使用Noto Sans SC字体
+                        ),
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -299,12 +337,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('API 设置已保存')),
           );
-          // Pop the screen after a short delay
-          Future.delayed(const Duration(seconds: 1), () {
-            if (mounted) {
-              Navigator.of(context).pop();
-            }
-          });
         }
       } catch (e) {
         if (mounted) {

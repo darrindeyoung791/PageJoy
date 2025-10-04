@@ -298,13 +298,32 @@ class _FavoritesScreenState extends State<_FavoritesScreen> {
                   const SizedBox(height: 16),
                   Text('加载收藏失败: ${snapshot.error}'),
                   const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _favoritesFuture = _loadFavorites();
-                      });
-                    },
-                    child: const Text('重试'),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _favoritesFuture = _loadFavorites();
+                        });
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                        elevation: 0, // 移除阴影
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12), // MD3推荐的圆角
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 16), // 增加按钮高度
+                      ),
+                      child: Text(
+                        '重试',
+                        style: TextStyle(
+                          fontSize: 16, 
+                          fontWeight: FontWeight.w500,
+                          fontFamily: 'NotoSansSC', // 使用Noto Sans SC字体
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -342,32 +361,88 @@ class _FavoritesScreenState extends State<_FavoritesScreen> {
                   ),
                   const SizedBox(height: 32),
                   if (isLoggedIn) ...[
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        // Change to home tab by accessing the parent HomeScreenState
-                        final homeState = context.findAncestorStateOfType<_HomeScreenState>();
-                        homeState?.changeTabIndex(0);
-                      },
-                      icon: const Icon(Icons.explore),
-                      label: const Text('去探索内容'),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          // Change to home tab by accessing the parent HomeScreenState
+                          final homeState = context.findAncestorStateOfType<_HomeScreenState>();
+                          homeState?.changeTabIndex(0);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Theme.of(context).colorScheme.primary,
+                          foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                          elevation: 0, // 移除阴影
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12), // MD3推荐的圆角
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 16), // 增加按钮高度
+                        ),
+                        label: Text(
+                          '去探索内容',
+                          style: TextStyle(
+                            fontSize: 16, 
+                            fontWeight: FontWeight.w500,
+                            fontFamily: 'NotoSansSC', // 使用Noto Sans SC字体
+                          ),
+                        ),
+                      ),
                     ),
                   ] else ...[
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        // Navigate to login screen
-                        Navigator.pushNamed(context, '/login');
-                      },
-                      icon: const Icon(Icons.login),
-                      label: const Text('登录'),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          // Navigate to login screen
+                          Navigator.pushNamed(context, '/login');
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Theme.of(context).colorScheme.primary,
+                          foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                          elevation: 0, // 移除阴影
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12), // MD3推荐的圆角
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 16), // 增加按钮高度
+                        ),
+                        icon: const Icon(Icons.login),
+                        label: Text(
+                          '登录',
+                          style: TextStyle(
+                            fontSize: 16, 
+                            fontWeight: FontWeight.w500,
+                            fontFamily: 'NotoSansSC', // 使用Noto Sans SC字体
+                          ),
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 16),
-                    OutlinedButton.icon(
-                      onPressed: () {
-                        // Navigate to registration screen
-                        Navigator.pushNamed(context, '/register');
-                      },
-                      icon: const Icon(Icons.app_registration),
-                      label: const Text('注册'),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        onPressed: () {
+                          // Navigate to registration screen
+                          Navigator.pushNamed(context, '/register');
+                        },
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Theme.of(context).colorScheme.primary,
+                          side: BorderSide(color: Theme.of(context).colorScheme.primary),
+                          elevation: 0, // 移除阴影
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12), // MD3推荐的圆角
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 16), // 增加按钮高度
+                        ),
+                        icon: const Icon(Icons.app_registration),
+                        label: Text(
+                          '注册',
+                          style: TextStyle(
+                            fontSize: 16, 
+                            fontWeight: FontWeight.w500,
+                            fontFamily: 'NotoSansSC', // 使用Noto Sans SC字体
+                          ),
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 24),
                     const Text(
@@ -605,13 +680,32 @@ class _ArticleFeedState extends State<ArticleFeed> {
             }
           ),
           const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                _articlesFuture = ArticleService.getArticles();
-              });
-            },
-            child: const Text('重试'),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  _articlesFuture = ArticleService.getArticles();
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                elevation: 0, // 移除阴影
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12), // MD3推荐的圆角
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 16), // 增加按钮高度
+              ),
+              child: Text(
+                '重试',
+                style: TextStyle(
+                  fontSize: 16, 
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'NotoSansSC', // 使用Noto Sans SC字体
+                ),
+              ),
+            ),
           ),
         ],
       ),
