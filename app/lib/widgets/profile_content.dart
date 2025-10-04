@@ -399,10 +399,6 @@ class _LoginOption extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            '选项',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
           const SizedBox(height: 16),
           ListTile(
             leading: const Icon(Icons.login),
