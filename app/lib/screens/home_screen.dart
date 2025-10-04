@@ -405,7 +405,6 @@ class _FavoritesScreenState extends State<_FavoritesScreen> {
                           ),
                           padding: const EdgeInsets.symmetric(vertical: 16), // 增加按钮高度
                         ),
-                        icon: const Icon(Icons.login),
                         label: Text(
                           '登录',
                           style: TextStyle(
@@ -433,7 +432,6 @@ class _FavoritesScreenState extends State<_FavoritesScreen> {
                           ),
                           padding: const EdgeInsets.symmetric(vertical: 16), // 增加按钮高度
                         ),
-                        icon: const Icon(Icons.app_registration),
                         label: Text(
                           '注册',
                           style: TextStyle(
@@ -681,7 +679,7 @@ class _ArticleFeedState extends State<ArticleFeed> {
           ),
           const SizedBox(height: 16),
           SizedBox(
-            width: double.infinity,
+            width: 200,
             child: ElevatedButton(
               onPressed: () {
                 setState(() {

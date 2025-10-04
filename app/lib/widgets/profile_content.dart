@@ -240,10 +240,6 @@ class _ProfileOptionsHorizontal extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                '选项',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
               const SizedBox(height: 16),
               if (userProvider.user != null) ...[
                 ListTile(
@@ -316,10 +312,6 @@ class _ProfileOptions extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                '选项',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
               const SizedBox(height: 8),
               if (userProvider.user == null) ...[
                 ListTile(
@@ -334,6 +326,13 @@ class _ProfileOptions extends StatelessWidget {
                   title: const Text('注册'),
                   onTap: () {
                     Navigator.pushNamed(context, '/register');
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.settings),
+                  title: const Text('设置'),
+                  onTap: () {
+                    Navigator.pushNamed(context, '/settings');
                   },
                 ),
               ] else ...[
