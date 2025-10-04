@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import '../services/user_provider.dart';
+import '../services/user_service.dart';
 
 class ProfileContent extends StatelessWidget {
   const ProfileContent({super.key});
@@ -50,93 +53,122 @@ class _ProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final bool isWideScreen = constraints.maxWidth > 600;
-        
-        if (isWideScreen) {
-          // 横屏模式：不使用卡片样式，保持原有布局
-          return Container(
-            margin: EdgeInsets.zero,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // 左半边：用户信息
-                Expanded(
-                  flex: 1,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Row(
-                      children: [
-                        const CircleAvatar(
-                          radius: 50,
-                          backgroundImage: CachedNetworkImageProvider(
-                            'https://via.placeholder.com/100',
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Text(
-                                '用户名',
-                                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(height: 8),
-                              const Text('user@example.com'),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                // 右半边：选项列表
-                const Expanded(
-                  flex: 1,
-                  child: _ProfileOptionsHorizontal(),
-                ),
-              ],
-            ),
-          );
-        } else {
-          // 竖屏模式：不使用卡片样式，保持居中布局
-          return Center(
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
+    return Consumer<UserProvider>(
+      builder: (context, userProvider, child) {
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final bool isWideScreen = constraints.maxWidth > 600;
+            
+            if (isWideScreen) {
+              // 横屏模式：不使用卡片样式，保持原有布局
+              return Container(
+                margin: EdgeInsets.zero,
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CircleAvatar(
-                      radius: 50,
-                      backgroundImage: CachedNetworkImageProvider(
-                        'https://via.placeholder.com/100',
+                    // 左半边：用户信息
+                    Expanded(
+                      flex: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: (userProvider.user != null)
+                            ? Row(
+                                children: [
+                                  const CircleAvatar(
+                                    radius: 50,
+                                    backgroundImage: CachedNetworkImageProvider(
+                                      'https://via.placeholder.com/100',
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          userProvider.user!.username,
+                                          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(userProvider.user!.email ?? 'user@example.com'),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : const Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    '未登录',
+                                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                                  ),
+                                  SizedBox(height: 16),
+                                  Text('登录后享受更多功能'),
+                                ],
+                              ),
                       ),
                     ),
-                    const SizedBox(width: 16),
+                    // 右半边：选项列表
                     Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            '用户名',
-                            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 8),
-                          const Text('user@example.com'),
-                        ],
-                      ),
+                      flex: 1,
+                      child: _ProfileOptionsConditionalWide(),
                     ),
                   ],
                 ),
-              ),
-            ),
-          );
-        }
+              );
+            } else {
+              // 竖屏模式：不使用卡片样式，保持居中布局
+              return Center(
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: (userProvider.user != null)
+                        ? Row(
+                            children: [
+                              const CircleAvatar(
+                                radius: 50,
+                                backgroundImage: CachedNetworkImageProvider(
+                                  'https://via.placeholder.com/100',
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      userProvider.user!.username,
+                                      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(userProvider.user!.email ?? 'user@example.com'),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          )
+                        : Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Text(
+                                '未登录',
+                                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 16),
+                              const Text('登录后享受更多功能'),
+                            ],
+                          ),
+                  ),
+                ),
+              );
+            }
+          },
+        );
       },
     );
   }
@@ -201,45 +233,165 @@ class _ProfileOptionsHorizontal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            '选项',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+    return Consumer<UserProvider>(
+      builder: (context, userProvider, child) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                '选项',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              if (userProvider.user != null) ...[
+                ListTile(
+                  leading: const Icon(Icons.history),
+                  title: const Text('阅读历史'),
+                  onTap: () {
+                    // TODO: Implement reading history
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.settings),
+                  title: const Text('设置'),
+                  onTap: () {
+                    Navigator.pushNamed(context, '/settings');
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.logout),
+                  title: const Text('退出登录'),
+                  onTap: () async {
+                    await UserService.logout();
+                    userProvider.clearUser();
+                    
+                    // 显示成功提示
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('已退出登录')),
+                    );
+                  },
+                ),
+              ] else ...[
+                ListTile(
+                  leading: const Icon(Icons.login),
+                  title: const Text('登录'),
+                  onTap: () {
+                    Navigator.pushNamed(context, '/login');
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.app_registration),
+                  title: const Text('注册'),
+                  onTap: () {
+                    Navigator.pushNamed(context, '/register');
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.settings),
+                  title: const Text('设置'),
+                  onTap: () {
+                    Navigator.pushNamed(context, '/settings');
+                  },
+                ),
+              ],
+            ],
           ),
-          const SizedBox(height: 16),
-          ListTile(
-            leading: const Icon(Icons.history),
-            title: const Text('阅读历史'),
-            onTap: () {
-              // TODO: Implement reading history
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.settings),
-            title: const Text('设置'),
-            onTap: () {
-              Navigator.pushNamed(context, '/settings');
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.logout),
-            title: const Text('退出登录'),
-            onTap: () {
-              // TODO: Implement logout
-            },
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
 
 class _ProfileOptions extends StatelessWidget {
   const _ProfileOptions();
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<UserProvider>(
+      builder: (context, userProvider, child) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                '选项',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              if (userProvider.user == null) ...[
+                ListTile(
+                  leading: const Icon(Icons.login),
+                  title: const Text('登录'),
+                  onTap: () {
+                    Navigator.pushNamed(context, '/login');
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.app_registration),
+                  title: const Text('注册'),
+                  onTap: () {
+                    Navigator.pushNamed(context, '/register');
+                  },
+                ),
+              ] else ...[
+                ListTile(
+                  leading: const Icon(Icons.history),
+                  title: const Text('阅读历史'),
+                  onTap: () {
+                    // TODO: Implement reading history
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.settings),
+                  title: const Text('设置'),
+                  onTap: () {
+                    Navigator.pushNamed(context, '/settings');
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.logout),
+                  title: const Text('退出登录'),
+                  onTap: () async {
+                    await UserService.logout();
+                    userProvider.clearUser();
+                    
+                    // 显示成功提示
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('已退出登录')),
+                    );
+                  },
+                ),
+              ],
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+// 横屏模式下的条件选项组件
+class _ProfileOptionsConditionalWide extends StatelessWidget {
+  const _ProfileOptionsConditionalWide();
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<UserProvider>(
+      builder: (context, userProvider, child) {
+        return (userProvider.user != null) 
+            ? const _ProfileOptionsHorizontal() 
+            : const _LoginOption();
+      },
+    );
+  }
+}
+
+// 未登录时显示的登录选项组件
+class _LoginOption extends StatelessWidget {
+  const _LoginOption();
 
   @override
   Widget build(BuildContext context) {
@@ -252,12 +404,19 @@ class _ProfileOptions extends StatelessWidget {
             '选项',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 16),
           ListTile(
-            leading: const Icon(Icons.history),
-            title: const Text('阅读历史'),
+            leading: const Icon(Icons.login),
+            title: const Text('登录'),
             onTap: () {
-              // TODO: Implement reading history
+              Navigator.pushNamed(context, '/login');
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.app_registration),
+            title: const Text('注册'),
+            onTap: () {
+              Navigator.pushNamed(context, '/register');
             },
           ),
           ListTile(
@@ -265,13 +424,6 @@ class _ProfileOptions extends StatelessWidget {
             title: const Text('设置'),
             onTap: () {
               Navigator.pushNamed(context, '/settings');
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.logout),
-            title: const Text('退出登录'),
-            onTap: () {
-              // TODO: Implement logout
             },
           ),
         ],

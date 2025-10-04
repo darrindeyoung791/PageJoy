@@ -199,9 +199,19 @@ class _HomeScreenState extends State<HomeScreen> {
         final double leftPadding = isLandscape ? 16.0 : 16.0 + safeAreaPadding.left;
         final double rightPadding = isLandscape ? 16.0 : 16.0 + safeAreaPadding.right;
         
+        // 根据当前索引设置标题
+        String appBarTitle = 'PageJoy'; // 默认标题
+        if (_currentIndex == 0) {
+          appBarTitle = 'PageJoy';
+        } else if (_currentIndex == 1) {
+          appBarTitle = '收藏';
+        } else if (_currentIndex == 2) {
+          appBarTitle = '我的';
+        }
+        
         return FlexibleSpaceBar(
           expandedTitleScale: 2,
-          title: const Text('PageJoy'), // 恢复标题显示
+          title: Text(appBarTitle),
           titlePadding: EdgeInsets.only(
             left: leftPadding,
             bottom: 16,
@@ -210,6 +220,14 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       },
     );
+  }
+
+  void changeTabIndex(int newIndex) {
+    if (newIndex != _currentIndex) {
+      setState(() {
+        _currentIndex = newIndex;
+      });
+    }
   }
 }
 
@@ -259,19 +277,20 @@ class _FavoritesScreenState extends State<_FavoritesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('我的收藏'),
-      ),
-      body: FutureBuilder<List<Article>>(
-        future: _favoritesFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
+    return FutureBuilder<List<Article>>(
+      future: _favoritesFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
               child: CircularProgressIndicator(),
-            );
-          } else if (snapshot.hasError) {
-            return Center(
+            ),
+          );
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -289,55 +308,126 @@ class _FavoritesScreenState extends State<_FavoritesScreen> {
                   ),
                 ],
               ),
-            );
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(
-              child: Text('暂无收藏内容'),
-            );
-          } else {
-            final articles = snapshot.data!;
-            return SingleChildScrollView(
-              physics: const ClampingScrollPhysics(), // 添加平滑滚动物理效果
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final crossAxisCount = constraints.maxWidth > 600 ? 2 : 1;
+            ),
+          );
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          // Check if user is logged in
+          final userProvider = context.watch<UserProvider>();
+          final isLoggedIn = userProvider.user != null;
+          
+          return Center(
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.bookmark_border,
+                    size: 80,
+                    color: Colors.grey,
+                  ),
+                  const SizedBox(height: 24),
+                  const Text(
+                    '还没有收藏的内容',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24.0),
+                    child: Text(
+                      '发现感兴趣的文章并点击收藏，它们就会出现在这里',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  if (isLoggedIn) ...[
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        // Change to home tab by accessing the parent HomeScreenState
+                        final homeState = context.findAncestorStateOfType<_HomeScreenState>();
+                        homeState?.changeTabIndex(0);
+                      },
+                      icon: const Icon(Icons.explore),
+                      label: const Text('去探索内容'),
+                    ),
+                  ] else ...[
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        // Navigate to login screen
+                        Navigator.pushNamed(context, '/login');
+                      },
+                      icon: const Icon(Icons.login),
+                      label: const Text('登录'),
+                    ),
+                    const SizedBox(height: 16),
+                    OutlinedButton.icon(
+                      onPressed: () {
+                        // Navigate to registration screen
+                        Navigator.pushNamed(context, '/register');
+                      },
+                      icon: const Icon(Icons.app_registration),
+                      label: const Text('注册'),
+                    ),
+                    const SizedBox(height: 24),
+                    const Text(
+                      '登录后可查看收藏内容',
+                      style: TextStyle(fontSize: 14, color: Colors.grey),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          );
+        } else {
+          final articles = snapshot.data!;
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              final crossAxisCount = constraints.maxWidth > 600 ? 2 : 1;
+              
+              // Calculate how many rows we need
+              final numberOfRows = (articles.length / crossAxisCount).ceil();
+              
+              return ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(), // Disable scrolling since parent handles it
+                itemCount: numberOfRows,
+                itemBuilder: (context, rowIndex) {
+                  // Create a row with up to crossAxisCount items
+                  List<Widget> rowChildren = [];
                   
-                  return Column(
-                    children: List.generate(
-                      (articles.length / crossAxisCount).ceil(),
-                      (index) => Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0,
-                          vertical: 8.0,
+                  for (int colIndex = 0; colIndex < crossAxisCount; colIndex++) {
+                    final articleIndex = rowIndex * crossAxisCount + colIndex;
+                    
+                    if (articleIndex < articles.length) {
+                      rowChildren.add(
+                        Expanded(
+                          child: ArticleCard(
+                            article: articles[articleIndex],
+                          ),
                         ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: ArticleCard(
-                                article: articles[index * crossAxisCount],
-                              ),
-                            ),
-                            if (crossAxisCount == 2 &&
-                                index * 2 + 1 < articles.length) ...[
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: ArticleCard(
-                                  article: articles[index * crossAxisCount + 1],
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
-                      ),
+                      );
+                      
+                      // Add spacing between items, but not after the last one
+                      if (colIndex < crossAxisCount - 1) {
+                        rowChildren.add(const SizedBox(width: 12));
+                      }
+                    }
+                  }
+                  
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: rowChildren,
                     ),
                   );
                 },
-              ),
-            );
-          }
-        },
-      ),
+              );
+            },
+          );
+        }
+      },
     );
   }
 }

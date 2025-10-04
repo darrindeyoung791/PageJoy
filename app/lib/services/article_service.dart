@@ -221,8 +221,10 @@ class ArticleService {
 
   static Future<List<Article>> getUserFavoriteArticles(int userId) async {
     if (_isOffline) {
-      // 在离线模式下返回空列表
-      return [];
+      // 在离线模式下返回一些示例收藏文章
+      final allArticles = generateSampleArticles();
+      // 返回其中的一部分作为收藏示例（前10个，或全部如果少于10个）
+      return allArticles.take(10).toList();
     }
     
     final response = await ApiService.get('/favorites/user/$userId/articles');
