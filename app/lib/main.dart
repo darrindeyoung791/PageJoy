@@ -9,6 +9,7 @@ import 'services/user_service.dart';
 import 'models/article.dart'; // Import Article model
 import 'services/api_service.dart'; // Import API service
 import 'package:shared_preferences/shared_preferences.dart';
+import 'services/article_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -239,6 +240,18 @@ class _MyAppState extends State<MyApp> {
               updateDynamicColor: _updateDynamicColor,
             ),
             '/font-test': (context) => const FontTestScreen(), // Font test screen
+            '/gfm-test': (context) => FutureBuilder<Article>(
+              future: ArticleService.getGfmTestArticle(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return ArticleScreen(article: snapshot.data!);
+                } else {
+                  return const Scaffold(
+                    body: Center(child: CircularProgressIndicator()),
+                  );
+                }
+              },
+            ), // GFM test article screen
           },
           onGenerateRoute: (settings) {
             if (settings.name == '/article') {

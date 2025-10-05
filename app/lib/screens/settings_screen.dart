@@ -243,6 +243,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   },
                 ),
                 const SizedBox(height: 16),
+                ListTile(
+                  title: const Text('GFM 测试'),
+                  subtitle: const Text('查看 GitHub Flavored Markdown 渲染效果'),
+                  onTap: () {
+                    Navigator.of(context).pushNamed('/gfm-test');
+                  },
+                ),
+                const SizedBox(height: 16),
                 Center(
                   child: SizedBox(
                     width: 200, // 固定宽度以符合设计规范
