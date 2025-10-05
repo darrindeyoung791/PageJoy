@@ -357,88 +357,86 @@ class _ArticleContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Markdown(
-        data: article.content,
-        styleSheet: MarkdownStyleSheet(
-          h1: Theme.of(context).textTheme.headlineMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-            fontVariations: [FontVariation('wght', 700.0)],
-          ),
-          h2: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-            fontVariations: [FontVariation('wght', 600.0)],
-          ),
-          h3: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w500,
-            fontVariations: [FontVariation('wght', 500.0)],
-          ),
-          h4: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.w500,
-            fontVariations: [FontVariation('wght', 500.0)],
-          ),
-          p: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontVariations: [FontVariation('wght', 500.0)],
-          ),
-          em: const TextStyle(fontStyle: FontStyle.italic),
-          strong: const TextStyle(fontWeight: FontWeight.bold),
-          code: const TextStyle(
-            fontFamily: 'monospace',
-            backgroundColor: Colors.grey,
-            color: Colors.white,
-          ),
-          codeblockDecoration: BoxDecoration(
-            color: Colors.grey.shade100,
-            borderRadius: BorderRadius.circular(8.0),
-            border: Border.all(color: Colors.grey.shade300),
-          ),
-          blockquote: TextStyle(
-            fontStyle: FontStyle.italic,
-            color: Colors.grey.shade700,
-          ),
-          blockquoteDecoration: BoxDecoration(
-            border: Border(
-              left: BorderSide(
-                color: Theme.of(context).colorScheme.primary,
-                width: 4.0,
-              ),
-            ),
-            color: Colors.grey.shade50,
-            borderRadius: BorderRadius.horizontal(
-              left: Radius.circular(4.0),
-              right: Radius.circular(8.0),
+    return Markdown(
+      data: article.content,
+      styleSheet: MarkdownStyleSheet(
+        h1: Theme.of(context).textTheme.headlineMedium?.copyWith(
+          fontWeight: FontWeight.bold,
+          fontVariations: [FontVariation('wght', 700.0)],
+        ),
+        h2: Theme.of(context).textTheme.headlineSmall?.copyWith(
+          fontWeight: FontWeight.bold,
+          fontVariations: [FontVariation('wght', 600.0)],
+        ),
+        h3: Theme.of(context).textTheme.titleLarge?.copyWith(
+          fontWeight: FontWeight.w500,
+          fontVariations: [FontVariation('wght', 500.0)],
+        ),
+        h4: Theme.of(context).textTheme.titleMedium?.copyWith(
+          fontWeight: FontWeight.w500,
+          fontVariations: [FontVariation('wght', 500.0)],
+        ),
+        p: Theme.of(context).textTheme.titleMedium?.copyWith(
+          fontVariations: [FontVariation('wght', 500.0)],
+        ),
+        em: const TextStyle(fontStyle: FontStyle.italic),
+        strong: const TextStyle(fontWeight: FontWeight.bold),
+        code: const TextStyle(
+          fontFamily: 'monospace',
+          backgroundColor: Colors.grey,
+          color: Colors.white,
+        ),
+        codeblockDecoration: BoxDecoration(
+          color: Colors.grey.shade100,
+          borderRadius: BorderRadius.circular(8.0),
+          border: Border.all(color: Colors.grey.shade300),
+        ),
+        blockquote: TextStyle(
+          fontStyle: FontStyle.italic,
+          color: Colors.grey.shade700,
+        ),
+        blockquoteDecoration: BoxDecoration(
+          border: Border(
+            left: BorderSide(
+              color: Theme.of(context).colorScheme.primary,
+              width: 4.0,
             ),
           ),
-          listBullet: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontVariations: [FontVariation('wght', 500.0)],
-          ),
-          tableHead: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-            fontVariations: [FontVariation('wght', 700.0)],
-          ),
-          tableBody: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontVariations: [FontVariation('wght', 500.0)],
-          ),
-          tableBorder: TableBorder.all(
-            color: Colors.grey.shade300,
-          ),
-          tableCellsDecoration: BoxDecoration(
-            color: Colors.transparent,
+          color: Colors.grey.shade50,
+          borderRadius: BorderRadius.horizontal(
+            left: Radius.circular(4.0),
+            right: Radius.circular(8.0),
           ),
         ),
-        onTapLink: (text, href, title) {
-          // 处理链接点击事件
-          // TODO: 实现链接跳转功能
-          print('Link tapped: $href');
-        },
-        selectable: true,
-        // Use GitHub Flavored Markdown for better feature support
-        extensionSet: md.ExtensionSet.gitHubFlavored,
-        // Add properties to fix scroll conflict in CustomScrollView
-        physics: const NeverScrollableScrollPhysics(), // Disable scroll physics to prevent conflict
-        shrinkWrap: true, // Make the widget size to its content
+        listBullet: Theme.of(context).textTheme.titleMedium?.copyWith(
+          fontVariations: [FontVariation('wght', 500.0)],
+        ),
+        tableHead: Theme.of(context).textTheme.titleMedium?.copyWith(
+          fontWeight: FontWeight.bold,
+          fontVariations: [FontVariation('wght', 700.0)],
+        ),
+        tableBody: Theme.of(context).textTheme.titleMedium?.copyWith(
+          fontVariations: [FontVariation('wght', 500.0)],
+        ),
+        tableBorder: TableBorder.all(
+          color: Colors.grey.shade300,
+        ),
+        tableCellsDecoration: BoxDecoration(
+          color: Colors.transparent,
+        ),
       ),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      onTapLink: (text, href, title) {
+        // 处理链接点击事件
+        // TODO: 实现链接跳转功能
+        print('Link tapped: $href');
+      },
+      selectable: true,
+      // Use GitHub Flavored Markdown for better feature support
+      extensionSet: md.ExtensionSet.gitHubFlavored,
+      // Add properties to fix scroll conflict in CustomScrollView
+      physics: const NeverScrollableScrollPhysics(), // Disable scroll physics to prevent conflict
+      shrinkWrap: true, // Make the widget size to its content
     );
   }
 }

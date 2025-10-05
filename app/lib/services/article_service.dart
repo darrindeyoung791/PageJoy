@@ -235,7 +235,13 @@ ___
 
 也可以使用自动链接 <https://example.com>。
 
-![示例图片](https://via.placeholder.com/150 "图片标题")
+## 图片示例
+
+这里有一个图片，独占一行：
+
+![示例图片](https://cn.bing.com/rp/Q0pzSymUNRwlfDJ3G2rxwANmBnc.png "示例图片标题")
+
+这是图片下方的内容，用来测试图片是否正确独占一行。
 
 ## 高级样式
 
@@ -275,7 +281,15 @@ ___
 | `flutter build` | 构建应用 | `flutter build apk` |
 ''',
 
-      '''Flutter 3.0 带来了许多令人兴奋的新特性和改进。Performance improvements include better shader compilation and reduced app startup time. The new Material 3 (Material You) design system is now available by default.
+      '''# Flutter 3.0 新特性详解
+
+![Flutter Banner](https://cn.bing.com/rp/Q0pzSymUNRwlfDJ3G2rxwANmBnc.png)
+
+Flutter 3.0 带来了许多令人兴奋的新特性和改进。Performance improvements include better shader compilation and reduced app startup time. The new Material 3 (Material You) design system is now available by default.
+
+## 主要特性
+
+![Material Design](https://cn.bing.com/rp/Q0pzSymUNRwlfDJ3G2rxwANmBnc.png)
 
 Key Features:
 1. Casual gaming toolkit
@@ -287,7 +301,35 @@ Key Features:
 
 Flutter 3.0 引入了新的开发工具和功能，进一步提升了开发体验。开发人员可以利用这些新工具更快地构建高质量的应用程序。新版本还改进了对 Web 和桌面平台的支持，使得跨平台开发变得更加顺畅。
 
+## 性能优化
+
+![Performance Chart](https://cn.bing.com/rp/Q0pzSymUNRwlfDJ3G2rxwANmBnc.png)
+
 对于移动应用开发，Flutter 3.0 带来了更好的性能优化和更低的内存占用。这使得应用程序运行更加流畅，用户体验得到了显著提升。同时，新版本还增加了对更多设备和屏幕尺寸的适配支持。
+
+## 代码示例
+
+```dart
+class Flutter3Example extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter 3.0 Example',
+      theme: ThemeData(useMaterial3: true),
+      home: Scaffold(
+        appBar: AppBar(title: Text('Flutter 3.0')),
+        body: Center(child: Text('Hello Flutter 3.0!')),
+      ),
+    );
+  }
+}
+```
+
+## 总结
+
+![Flutter Logo](https://cn.bing.com/rp/Q0pzSymUNRwlfDJ3G2rxwANmBnc.png)
+
+新版本还增加了对更多设备和屏幕尺寸的适配支持。
 ''',
 
       '''Dart null safety 是一个重要的语言特性，它帮助开发者在编译时就能发现潜在的空指针错误。
