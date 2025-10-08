@@ -96,7 +96,13 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     // 从Provider监听离线模式状态
-    _isOffline = context.watch<OfflineModeProvider>().isOfflineMode;
+    bool currentOfflineMode = context.watch<OfflineModeProvider>().isOfflineMode;
+    
+    // 如果状态不同，则更新本地状态并通知ArticleService
+    if (_isOffline != currentOfflineMode) {
+      _isOffline = currentOfflineMode;
+      ArticleService.setOfflineMode(_isOffline);
+    }
     
     return LayoutBuilder(
       builder: (context, constraints) {

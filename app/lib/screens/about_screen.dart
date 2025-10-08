@@ -37,10 +37,8 @@ class AboutScreen extends StatelessWidget {
                   
                   // 意见反馈按钮
                   _buildFeedbackButton(context),
-                  SliverToBoxAdapter(
-                    child: SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.25, // 1/4 屏幕高度
-                    ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.25, // 1/4 屏幕高度
                   ),
                 ]),
               ),
