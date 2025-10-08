@@ -101,7 +101,7 @@ print(fibonacci(10))
 
 [示例网站](https://www.example.com )
 
-![图片的替代文字](https://cn.bing.com/rp/Q0pzSymUNRwlfDJ3G2rxwANmBnc.png  "可选标题")
+![图片的替代文字](https://www4.bing.com//th?id=OHR.DragonEndeavour_ZH-CN8160066040_1920x1080.jpg&rf=LaDigue_1920x1080.jpg  "可选标题")
 
 ## 任务列表
 

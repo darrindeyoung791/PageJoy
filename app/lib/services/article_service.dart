@@ -6,8 +6,8 @@ import '../models/favorite.dart';
 import 'api_service.dart';
 
 class ArticleService {
-  // Flag to simulate offline mode
-  static bool _isOffline = true;
+  // Flag to simulate offline mode - will be set from global state
+  static bool _isOffline = false;
   
   static void setOfflineMode(bool offline) {
     _isOffline = offline;

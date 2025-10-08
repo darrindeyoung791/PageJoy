@@ -27,6 +27,7 @@ import 'models/article.dart'; // Import Article model
 import 'services/api_service.dart'; // Import API service
 import 'package:shared_preferences/shared_preferences.dart';
 import 'services/article_service.dart';
+import 'services/settings_service.dart'; // Import SettingsService
 import 'services/offline_mode_provider.dart'; // Import OfflineModeProvider
 
 void main() async {
@@ -39,6 +40,10 @@ void main() async {
   if (currentUser != null) {
     userProvider.setUser(currentUser);
   }
+  
+  // 在创建Provider之前加载离线模式设置并同步到ArticleService
+  final settings = await SettingsService.loadSettings();
+  ArticleService.setOfflineMode(settings.enableOfflineMode);
   
   runApp(
     MultiProvider(

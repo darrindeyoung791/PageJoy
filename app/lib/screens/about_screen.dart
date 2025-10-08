@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart'; // 导入URL launcher
 import '../utils/animal_version.dart';
 
 class AboutScreen extends StatelessWidget {
@@ -35,8 +36,8 @@ class AboutScreen extends StatelessWidget {
                   _buildCreditsInfo(context),
                   const SizedBox(height: 24),
                   
-                  // 意见反馈按钮
-                  _buildFeedbackButton(context),
+                  // GitHub项目链接按钮
+                  _buildGitHubButton(context),
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.25, // 1/4 屏幕高度
                   ),
@@ -163,16 +164,26 @@ class AboutScreen extends StatelessWidget {
     );
   }
 
-  // 构建反馈按钮
-  Widget _buildFeedbackButton(BuildContext context) {
+  // 构建GitHub链接按钮
+  Widget _buildGitHubButton(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Center(
         child: SizedBox(
           width: 200, // 固定宽度以符合设计规范
           child: ElevatedButton(
-            onPressed: () {
-              // TODO: 实现反馈功能
+            onPressed: () async {
+              final Uri url = Uri.parse('https://github.com/darrindeyoung791/PageJoy');
+              if (await canLaunchUrl(url)) {
+                await launchUrl(url);
+              } else {
+                // 如果无法打开链接，可以显示错误信息或尝试其他方式
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('无法打开链接，请检查网络连接'),
+                  ),
+                );
+              }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.primary,
@@ -184,7 +195,7 @@ class AboutScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 16), // 增加按钮高度
             ),
             child: Text(
-              '意见反馈',
+              '在 GitHub 上查看本项目',
               style: TextStyle(
                 fontSize: 16, 
                 fontWeight: FontWeight.w500,
