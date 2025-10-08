@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // For FontVariation
-import 'package:shared_preferences/shared_preferences.dart';
-import '../services/api_service.dart';
-import '../utils/animal_version.dart';
+import 'package:provider/provider.dart';
+import '../models/app_settings.dart';
+import '../services/settings_service.dart';
+import '../services/offline_mode_provider.dart';
 
 class SettingsScreen extends StatefulWidget {
   final Function(ThemeMode)? updateThemeMode;
@@ -15,50 +16,46 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  final _formKey = GlobalKey<FormState>();
-  late TextEditingController _baseUrlController;
-  
-  // Theme settings
-  ThemeMode _themeMode = ThemeMode.system;
-  bool _useDynamicColor = true; // 默认启用动态颜色
-  
-  // Reading settings
-  bool _enablePageTurnAnimation = true;
+  AppSettings _settings = AppSettings();
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _baseUrlController = TextEditingController(text: ApiService.baseUrl);
     _loadSettings();
-  }
-
-  @override
-  void dispose() {
-    _baseUrlController.dispose();
-    super.dispose();
   }
 
   // Load settings from shared preferences
   Future<void> _loadSettings() async {
-    final prefs = await SharedPreferences.getInstance();
-    final themeModeIndex = prefs.getInt('themeMode') ?? 0;
-    setState(() {
-      _themeMode = ThemeMode.values[themeModeIndex];
-      _useDynamicColor = prefs.getBool('useDynamicColor') ?? true;
-      _enablePageTurnAnimation = prefs.getBool('enablePageTurnAnimation') ?? true;
-    });
+    final settings = await SettingsService.loadSettings();
+    if (mounted) {
+      setState(() {
+        _settings = settings;
+        _isLoading = false;
+      });
+    }
   }
 
   // Save settings to shared preferences
   Future<void> _saveSettings() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('themeMode', _themeMode.index);
-    await prefs.setBool('useDynamicColor', _useDynamicColor);
-    await prefs.setBool('enablePageTurnAnimation', _enablePageTurnAnimation);
+    await SettingsService.saveSettings(_settings);
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('设置'),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('设置'),
@@ -68,291 +65,209 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       ),
       body: SafeArea(
-        // 添加最小边距以确保在所有设备上都有适当的间距，特别是在刘海屏和横屏模式下
-        minimum: const EdgeInsets.only(top: 8.0, left: 8.0, right: 8.0, bottom: 8.0),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'API 设置',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        fontVariations: [FontVariation('wght', 700.0)],
-                      ),
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _baseUrlController,
-                  decoration: const InputDecoration(
-                    labelText: 'API 基础 URL',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return '请输入 API 基础 URL';
-                    }
-                    // Basic URL validation
-                    try {
-                      final uri = Uri.parse(value);
-                      if (uri.host.isEmpty) {
-                        return '请输入有效的 URL';
-                      }
-                    } catch (e) {
-                      return '请输入有效的 URL';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 24),
-                Center(
-                  child: SizedBox(
-                    width: 200, // 固定宽度以符合设计规范
-                    child: ElevatedButton(
-                      onPressed: _saveApiSettings,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                        elevation: 0, // 移除阴影
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12), // MD3推荐的圆角
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 16), // 增加按钮高度
-                      ),
-                      child: Text(
-                        '保存 API 设置',
-                        style: TextStyle(
-                          fontSize: 16, 
-                          fontWeight: FontWeight.w500,
-                          fontFamily: 'NotoSansSC', // 使用Noto Sans SC字体
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                const Divider(),
-                const SizedBox(height: 16),
-                
-                // Display settings
-                Text(
-                  '显示设置',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        fontVariations: [FontVariation('wght', 600.0)],
-                      ),
-                ),
-                const SizedBox(height: 16),
-                ListTile(
-                  title: const Text('主题模式'),
-                  trailing: DropdownButton<ThemeMode>(
-                    value: _themeMode,
-                    items: const [
-                      DropdownMenuItem(
-                        value: ThemeMode.system,
-                        child: Text('跟随系统'),
-                      ),
-                      DropdownMenuItem(
-                        value: ThemeMode.light,
-                        child: Text('浅色模式'),
-                      ),
-                      DropdownMenuItem(
-                        value: ThemeMode.dark,
-                        child: Text('深色模式'),
-                      ),
+        child: CustomScrollView(
+          slivers: [
+            SliverPadding(
+              padding: const EdgeInsets.only(top: 24.0, left: 24.0, right: 24.0),
+              sliver: SliverList(
+                delegate: SliverChildListDelegate([
+                  // Section header for Display settings
+                  _buildSectionHeader(context, '显示'),
+                  _buildDropdownSetting(
+                    context,
+                    '主题',
+                    '根据您的壁纸调整主题',
+                    [
+                      _DropdownItem('浅色', ThemeMode.light),
+                      _DropdownItem('深色', ThemeMode.dark),
+                      _DropdownItem('跟随系统', ThemeMode.system),
                     ],
-                    onChanged: (value) {
+                    _settings.themeMode,
+                    (value) {
                       if (value != null) {
                         setState(() {
-                          _themeMode = value;
+                          _settings.themeMode = value;
                         });
                         _saveSettings();
-                        // Call the callback to update theme mode in main app
                         widget.updateThemeMode?.call(value);
                       }
                     },
                   ),
-                ),
-                SwitchListTile(
-                  title: const Text('动态颜色 (Material You)'),
-                  subtitle: const Text('使用壁纸颜色生成主题'),
-                  value: _useDynamicColor,
-                  onChanged: (value) {
-                    setState(() {
-                      _useDynamicColor = value;
-                    });
-                    _saveSettings();
-                    // Call the callback to update dynamic color setting in main app
-                    widget.updateDynamicColor?.call(value);
-                    // Show a message that the app needs to be restarted
-                  },
-                ),
-                const SizedBox(height: 16),
-                const SizedBox(height: 16),
-                
-                // Reading settings
-                Text(
-                  '阅读设置',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        fontVariations: [FontVariation('wght', 600.0)],
-                      ),
-                ),
-                const SizedBox(height: 16),
-                SwitchListTile(
-                  title: const Text('翻页动画'),
-                  value: _enablePageTurnAnimation,
-                  onChanged: (value) {
-                    setState(() {
-                      _enablePageTurnAnimation = value;
-                    });
-                    _saveSettings();
-                  },
-                ),
-                const SizedBox(height: 24),
-                const Divider(),
-                const SizedBox(height: 16),
-                
-                // About section
-                Text(
-                  '关于',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        fontVariations: [FontVariation('wght', 600.0)],
-                      ),
-                ),
-                const SizedBox(height: 16),
-                // 版本信息 - 放在关于标题正下方
-                FutureBuilder<String>(
-                  future: AnimalVersion.getDisplayVersion(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return ListTile(
-                        title: const Text('版本信息'),
-                        subtitle: Text(snapshot.data!),
-                      );
-                    } else {
-                      return const ListTile(
-                        title: Text('版本信息'),
-                        subtitle: Text('加载中...'),
-                      );
-                    }
-                  },
-                ),
-                const SizedBox(height: 16),
-                ListTile(
-                  title: const Text('GFM 测试'),
-                  subtitle: const Text('查看 GitHub Flavored Markdown 渲染效果'),
-                  onTap: () {
-                    Navigator.of(context).pushNamed('/gfm-test');
-                  },
-                ),
-                const SizedBox(height: 16),
-                Center(
-                  child: SizedBox(
-                    width: 200, // 固定宽度以符合设计规范
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // TODO: Implement feedback functionality
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                        elevation: 0, // 移除阴影
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12), // MD3推荐的圆角
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 16), // 增加按钮高度
-                      ),
-                      child: Text(
-                        '意见反馈',
-                        style: TextStyle(
-                          fontSize: 16, 
-                          fontWeight: FontWeight.w500,
-                          fontFamily: 'NotoSansSC', // 使用Noto Sans SC字体
-                        ),
-                      ),
-                    ),
+                  _buildSwitchSetting(
+                    context,
+                    '动态颜色',
+                    '根据您的壁纸调整主题颜色',
+                    _settings.useDynamicColor,
+                    (value) {
+                      setState(() {
+                        _settings.useDynamicColor = value;
+                      });
+                      _saveSettings();
+                      widget.updateDynamicColor?.call(value);
+                    },
                   ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  '感谢以下图片作者为本项目提供的精美动物图片：',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  '• 羚羊 (Antelope) - Amy Chung (https://www.pexels.com/zh-cn/@amy-chung-209788/)\n'
-                  '• 美洲野牛 (Bison) - Chaitaastic (https://www.pexels.com/zh-cn/@chaitaastic/)\n'
-                  '• 美洲狮 (Cougar) - Lucas Pezeta (https://www.pexels.com/zh-cn/@lucaspezeta/)\n'
-                  '• 海豚 (Dolphin) - Hamid Elbaz (https://www.pexels.com/zh-cn/@hamid-elbaz-62178/)\n'
-                  '• 大象 (Elephant) - Hsapir (https://www.pexels.com/zh-cn/@hsapir/)\n'
-                  '• 猎鹰 (Falcon) - Co Sch (https://www.pexels.com/zh-cn/@co-sch-48159/)\n'
-                  '• 长颈鹿 (Giraffe) - Pixabay (https://www.pexels.com/zh-cn/@pixabay/)\n'
-                  '• 刺猬 (Hedgehog) - Pixabay (https://www.pexels.com/zh-cn/@pixabay/)\n'
-                  '• 鬣蜥 (Iguana) - Gina Jie Sam Foek (https://www.pexels.com/zh-cn/@gina-jie-sam-foek-126882/)\n'
-                  '• 美洲豹 (Jaguar) - Yigithan Ozturk (https://www.pexels.com/zh-cn/@yigithan02/)\n'
-                  '• 考拉 (Koala) - Pixabay (https://www.pexels.com/zh-cn/@pixabay/)\n'
-                  '• 狐猴 (Lemur) - Magda Ehlers (https://www.pexels.com/zh-cn/@magda-ehlers-pexels/)\n'
-                  '• 海牛 (Manatee) - Jakub Pabis (https://www.pexels.com/zh-cn/@jakub-pabis-147246622/)\n'
-                  '• 夜莺 (Nightingale) - Guvo59 (https://www.pexels.com/zh-cn/@guvo59/)\n'
-                  '• 水獭 (Otter) - Pixabay (https://www.pexels.com/zh-cn/@pixabay/)\n'
-                  '• 熊猫 (Panda) - Diana Silaraja (https://www.pexels.com/zh-cn/@diana-silaraja-794257/)\n'
-                  '• 鹌鹑 (Quail) - Brett Sayles (https://www.pexels.com/zh-cn/@brett-sayles/)\n'
-                  '• 浣熊 (Raccoon) - Pixabay (https://www.pexels.com/zh-cn/@pixabay/)\n'
-                  '• 蜘蛛 (Spider) - Pixabay (https://www.pexels.com/zh-cn/@pixabay/)\n'
-                  '• 巨嘴鸟 (Toucan) - Ekaterina (https://www.pexels.com/zh-cn/@ekamelev/)\n'
-                  '• 独角兽 (Unicorn) - Karolina Grabowska (https://www.pexels.com/zh-cn/@karolina-grabowska/)\n'
-                  '• 秃鹫 (Vulture) - Harry Letté (https://www.pexels.com/zh-cn/@harry-lette-1201293/)\n'
-                  '• 海象 (Walrus) - Francesco Ungaro (https://www.pexels.com/zh-cn/@francesco-ungaro/)\n'
-                  '• 非洲地松鼠 (Xerus) - Charles Durand (https://www.pexels.com/zh-cn/@charldurand/)\n'
-                  '• 牦牛 (Yak) - Liam Gant (https://www.pexels.com/zh-cn/@liam-gant-619294/)\n'
-                  '• 斑马 (Zebra) - Pixabay (https://www.pexels.com/zh-cn/@pixabay/)',
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  '使用说明',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        fontVariations: [FontVariation('wght', 600.0)],
-                      ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  '• 在本地开发时，通常使用 http://localhost:8001 或 http://127.0.0.1:8001\n'
-                  '• 在模拟器中访问本地服务器时，可能需要使用 http://10.0.2.2:8001 (Android) 或宿主机 IP\n'
-                  '• 在真机调试时，需要确保手机和电脑在同一局域网，并使用电脑的局域网 IP 地址，如 http://192.168.1.100:8001',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 24), // 添加一些底部间距
-              ],
+                  const SizedBox(height: 24),
+                  
+                  // Section header for Reading settings
+                  _buildSectionHeader(context, '阅读'),
+                  _buildSwitchSetting(
+                    context,
+                    '离线模式',
+                    '在离线模式下使用缓存的数据',
+                    _settings.enableOfflineMode,
+                    (value) async {
+                      setState(() {
+                        _settings.enableOfflineMode = value;
+                      });
+                      _saveSettings();
+                      
+                      // 更新全局离线模式状态
+                      final offlineModeProvider = context.read<OfflineModeProvider>();
+                      offlineModeProvider.setOfflineMode(value);
+                    },
+                  ),
+                  const SizedBox(height: 24),
+                  
+                  // Section header for Other settings
+                  _buildSectionHeader(context, '其他'),
+                  _buildNavigationSetting(
+                    context,
+                    '开发设置',
+                    'API配置、测试页面等',
+                    '/developer-settings',
+                  ),
+                  _buildNavigationSetting(
+                    context,
+                    '关于',
+                    '版本信息、致谢等',
+                    '/about',
+                  ),
+                ]),
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
   }
 
-  void _saveApiSettings() async {
-    if (_formKey.currentState!.validate()) {
-      try {
-        await ApiService.setBaseUrl(_baseUrlController.text);
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('API 设置已保存')),
-          );
-        }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('保存失败: $e')),
-          );
-        }
-      }
-    }
+  // 构建分段标题
+  Widget _buildSectionHeader(BuildContext context, String title) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 8.0),
+      child: Text(
+        title,
+        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              color: Theme.of(context).colorScheme.primary,
+              fontWeight: FontWeight.w500,
+            ),
+      ),
+    );
   }
+
+  // 构建下拉设置项
+  Widget _buildDropdownSetting<T>(
+    BuildContext context,
+    String title,
+    String subtitle,
+    List<_DropdownItem<T>> items,
+    T currentValue,
+    void Function(T?) onChanged,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 2.0),
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(0),
+        title: Text(
+          title,
+          style: Theme.of(context).textTheme.bodyLarge,
+        ),
+        subtitle: Text(
+          subtitle,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
+        trailing: DropdownButton<T>(
+          value: currentValue,
+          items: items.map((item) {
+            return DropdownMenuItem<T>(
+              value: item.value,
+              child: Text(item.label),
+            );
+          }).toList(),
+          onChanged: onChanged,
+          underline: const SizedBox(), // Remove the default underline
+        ),
+      ),
+    );
+  }
+
+  // 构建开关设置项
+  Widget _buildSwitchSetting(
+    BuildContext context,
+    String title,
+    String subtitle,
+    bool value,
+    void Function(bool) onChanged,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 2.0),
+      child: SwitchListTile(
+        contentPadding: EdgeInsets.zero,
+        title: Text(
+          title,
+          style: Theme.of(context).textTheme.bodyLarge,
+        ),
+        subtitle: Text(
+          subtitle,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
+        value: value,
+        onChanged: onChanged,
+      ),
+    );
+  }
+
+  // 构建导航设置项
+  Widget _buildNavigationSetting(
+    BuildContext context,
+    String title,
+    String subtitle,
+    String route,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 2.0),
+      child: ListTile(
+        contentPadding: EdgeInsets.zero,
+        title: Text(
+          title,
+          style: Theme.of(context).textTheme.bodyLarge,
+        ),
+        subtitle: Text(
+          subtitle,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
+        trailing: Icon(
+          Icons.chevron_right,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
+        onTap: () {
+          Navigator.of(context).pushNamed(route);
+        },
+      ),
+    );
+  }
+}
+
+// 辅助类：下拉项目
+class _DropdownItem<T> {
+  final String label;
+  final T value;
+
+  _DropdownItem(this.label, this.value);
 }

@@ -4,12 +4,30 @@ import 'package:provider/provider.dart';
 import 'package:dynamic_color/dynamic_color.dart'; // For dynamic color support
 import 'screens/index.dart';
 import 'screens/font_test_screen.dart'; // Font test screen
+import 'screens/developer_settings_screen.dart'; // 开发设置页面
+import 'screens/about_screen.dart'; // 关于页面
 import 'services/user_provider.dart';
 import 'services/user_service.dart';
 import 'models/article.dart'; // Import Article model
 import 'services/api_service.dart'; // Import API service
 import 'package:shared_preferences/shared_preferences.dart';
 import 'services/article_service.dart';
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'; // For FontVariation and SystemUiOverlayStyle
+import 'package:provider/provider.dart';
+import 'package:dynamic_color/dynamic_color.dart'; // For dynamic color support
+import 'screens/index.dart';
+import 'screens/font_test_screen.dart'; // Font test screen
+import 'screens/developer_settings_screen.dart'; // 开发设置页面
+import 'screens/about_screen.dart'; // 关于页面
+import 'services/user_provider.dart';
+import 'services/user_service.dart';
+import 'models/article.dart'; // Import Article model
+import 'services/api_service.dart'; // Import API service
+import 'package:shared_preferences/shared_preferences.dart';
+import 'services/article_service.dart';
+import 'services/offline_mode_provider.dart'; // Import OfflineModeProvider
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,8 +41,11 @@ void main() async {
   }
   
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => userProvider,
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => userProvider),
+        ChangeNotifierProvider(create: (context) => OfflineModeProvider()), // 添加离线模式Provider
+      ],
       child: const MyApp(),
     ),
   );
@@ -70,6 +91,12 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _useDynamicColor = useDynamicColor;
     });
+  }
+
+  // Update offline mode setting
+  void _updateOfflineMode(bool enableOfflineMode) {
+    // 更新ArticleService的离线模式设置
+    ArticleService.setOfflineMode(enableOfflineMode);
   }
 
   @override
@@ -239,6 +266,8 @@ class _MyAppState extends State<MyApp> {
               updateThemeMode: _updateThemeMode,
               updateDynamicColor: _updateDynamicColor,
             ),
+            '/developer-settings': (context) => const DeveloperSettingsScreen(), // 开发设置页面
+            '/about': (context) => const AboutScreen(), // 关于页面
             '/font-test': (context) => const FontTestScreen(), // Font test screen
             '/gfm-test': (context) => FutureBuilder<Article>(
               future: ArticleService.getGfmTestArticle(),

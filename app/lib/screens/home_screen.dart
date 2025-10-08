@@ -1,8 +1,12 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/article.dart';
 import '../services/article_service.dart';
 import '../services/user_provider.dart';
+import '../services/offline_mode_provider.dart';
 import '../widgets/article_card.dart';
 import '../widgets/article_skeleton.dart'; // Import skeleton loader
 import '../widgets/profile_content.dart'; // Import ProfileContent
@@ -16,17 +20,84 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
-  bool _isOffline = true;
+  bool _isOffline = false; // 默认为在线模式
 
-  void _toggleOfflineMode() {
-    setState(() {
-      _isOffline = !_isOffline;
-      ArticleService.setOfflineMode(_isOffline);
-    });
+  @override
+  void initState() {
+    super.initState();
+    _loadOfflineModeFromSettings();
+  }
+
+  void dispose() {
+    super.dispose();
+  }
+
+
+
+  // 从设置中加载离线模式状态
+  void _loadOfflineModeFromSettings() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final settingsJson = prefs.getString('app_settings');
+      if (settingsJson != null) {
+        final Map<String, dynamic> json = Map<String, dynamic>.from((jsonDecode(settingsJson) as Map));
+        bool enableOfflineMode = json['enableOfflineMode'] ?? false;
+        if (_isOffline != enableOfflineMode) {
+          setState(() {
+            _isOffline = enableOfflineMode;
+          });
+          ArticleService.setOfflineMode(enableOfflineMode);
+        }
+      }
+    } catch (e) {
+      print('加载离线模式设置失败: $e');
+    }
+  }
+
+
+
+  // 获取翻页动画设置
+  Future<bool> _getEnablePageTurnAnimation() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final settingsJson = prefs.getString('app_settings');
+      if (settingsJson != null) {
+        final Map<String, dynamic> json = Map<String, dynamic>.from((jsonDecode(settingsJson) as Map));
+        return json['enablePageTurnAnimation'] ?? true;
+      }
+      return true; // 默认开启
+    } catch (e) {
+      print('加载翻页动画设置失败: $e');
+      return true; // 默认开启
+    }
+  }
+
+  // 设置翻页动画
+  void _setEnablePageTurnAnimation(bool value) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final settingsJson = prefs.getString('app_settings');
+      Map<String, dynamic> json = {};
+      
+      if (settingsJson != null) {
+        json = Map<String, dynamic>.from((jsonDecode(settingsJson) as Map));
+      }
+      
+      json['enablePageTurnAnimation'] = value;
+      await prefs.setString('app_settings', jsonEncode(json));
+      
+      // 重新构建界面以反映更改
+      setState(() {});
+    } catch (e) {
+      print('保存翻页动画设置失败: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    // 从Provider监听离线模式状态
+    _isOffline = context.watch<OfflineModeProvider>().isOfflineMode;
+    
     return LayoutBuilder(
       builder: (context, constraints) {
         final bool isWideScreen = constraints.maxWidth > 600;
@@ -83,17 +154,12 @@ class _HomeScreenState extends State<HomeScreen> {
               physics: const ClampingScrollPhysics(), // 添加平滑滚动物理效果
               slivers: [
                 SliverAppBar(
-                  expandedHeight: 120,
+                  expandedHeight: 100,
                   collapsedHeight: 60,
                   floating: false,
                   pinned: true,
                   flexibleSpace: _buildFlexibleSpaceBar(),
                   actions: [
-                    IconButton(
-                      icon: Icon(_isOffline ? Icons.wifi_off : Icons.wifi),
-                      onPressed: _toggleOfflineMode,
-                      tooltip: _isOffline ? '离线模式' : '在线模式',
-                    ),
                     IconButton(
                       icon: const Icon(Icons.search),
                       onPressed: () {
@@ -126,11 +192,6 @@ class _HomeScreenState extends State<HomeScreen> {
             pinned: true,        // 完全隐藏
             flexibleSpace: _buildFlexibleSpaceBar(),
             actions: [
-              IconButton(
-                icon: Icon(_isOffline ? Icons.wifi_off : Icons.wifi),
-                onPressed: _toggleOfflineMode,
-                tooltip: _isOffline ? '离线模式' : '在线模式',
-              ),
               IconButton(
                 icon: const Icon(Icons.search),
                 onPressed: () {
@@ -298,29 +359,31 @@ class _FavoritesScreenState extends State<_FavoritesScreen> {
                   const SizedBox(height: 16),
                   Text('加载收藏失败: ${snapshot.error}'),
                   const SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          _favoritesFuture = _loadFavorites();
-                        });
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                        elevation: 0, // 移除阴影
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12), // MD3推荐的圆角
+                  Center(
+                    child: SizedBox(
+                      width: 200, // 固定宽度以符合设计规范
+                      child: ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            _favoritesFuture = _loadFavorites();
+                          });
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Theme.of(context).colorScheme.primary,
+                          foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                          elevation: 0, // 移除阴影
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12), // MD3推荐的圆角
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 16), // 增加按钮高度
                         ),
-                        padding: const EdgeInsets.symmetric(vertical: 16), // 增加按钮高度
-                      ),
-                      child: Text(
-                        '重试',
-                        style: TextStyle(
-                          fontSize: 16, 
-                          fontWeight: FontWeight.w500,
-                          fontFamily: 'NotoSansSC', // 使用Noto Sans SC字体
+                        child: Text(
+                          '重试',
+                          style: TextStyle(
+                            fontSize: 16, 
+                            fontWeight: FontWeight.w500,
+                            fontFamily: 'NotoSansSC', // 使用Noto Sans SC字体
+                          ),
                         ),
                       ),
                     ),
@@ -361,83 +424,89 @@ class _FavoritesScreenState extends State<_FavoritesScreen> {
                   ),
                   const SizedBox(height: 32),
                   if (isLoggedIn) ...[
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          // Change to home tab by accessing the parent HomeScreenState
-                          final homeState = context.findAncestorStateOfType<_HomeScreenState>();
-                          homeState?.changeTabIndex(0);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(context).colorScheme.primary,
-                          foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                          elevation: 0, // 移除阴影
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12), // MD3推荐的圆角
+                    Center(
+                      child: SizedBox(
+                        width: 200, // 固定宽度以符合设计规范
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            // Change to home tab by accessing the parent HomeScreenState
+                            final homeState = context.findAncestorStateOfType<_HomeScreenState>();
+                            homeState?.changeTabIndex(0);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Theme.of(context).colorScheme.primary,
+                            foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                            elevation: 0, // 移除阴影
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12), // MD3推荐的圆角
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 16), // 增加按钮高度
                           ),
-                          padding: const EdgeInsets.symmetric(vertical: 16), // 增加按钮高度
-                        ),
-                        label: Text(
-                          '去探索内容',
-                          style: TextStyle(
-                            fontSize: 16, 
-                            fontWeight: FontWeight.w500,
-                            fontFamily: 'NotoSansSC', // 使用Noto Sans SC字体
+                          label: Text(
+                            '去探索内容',
+                            style: TextStyle(
+                              fontSize: 16, 
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'NotoSansSC', // 使用Noto Sans SC字体
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ] else ...[
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          // Navigate to login screen
-                          Navigator.pushNamed(context, '/login');
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(context).colorScheme.primary,
-                          foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                          elevation: 0, // 移除阴影
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12), // MD3推荐的圆角
+                    Center(
+                      child: SizedBox(
+                        width: 200, // 固定宽度以符合设计规范
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            // Navigate to login screen
+                            Navigator.pushNamed(context, '/login');
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Theme.of(context).colorScheme.primary,
+                            foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                            elevation: 0, // 移除阴影
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12), // MD3推荐的圆角
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 16), // 增加按钮高度
                           ),
-                          padding: const EdgeInsets.symmetric(vertical: 16), // 增加按钮高度
-                        ),
-                        label: Text(
-                          '登录',
-                          style: TextStyle(
-                            fontSize: 16, 
-                            fontWeight: FontWeight.w500,
-                            fontFamily: 'NotoSansSC', // 使用Noto Sans SC字体
+                          label: Text(
+                            '登录',
+                            style: TextStyle(
+                              fontSize: 16, 
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'NotoSansSC', // 使用Noto Sans SC字体
+                            ),
                           ),
                         ),
                       ),
                     ),
                     const SizedBox(height: 16),
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton.icon(
-                        onPressed: () {
-                          // Navigate to registration screen
-                          Navigator.pushNamed(context, '/register');
-                        },
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Theme.of(context).colorScheme.primary,
-                          side: BorderSide(color: Theme.of(context).colorScheme.primary),
-                          elevation: 0, // 移除阴影
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12), // MD3推荐的圆角
+                    Center(
+                      child: SizedBox(
+                        width: 200, // 固定宽度以符合设计规范
+                        child: OutlinedButton.icon(
+                          onPressed: () {
+                            // Navigate to registration screen
+                            Navigator.pushNamed(context, '/register');
+                          },
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: Theme.of(context).colorScheme.primary,
+                            side: BorderSide(color: Theme.of(context).colorScheme.primary),
+                            elevation: 0, // 移除阴影
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12), // MD3推荐的圆角
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 16), // 增加按钮高度
                           ),
-                          padding: const EdgeInsets.symmetric(vertical: 16), // 增加按钮高度
-                        ),
-                        label: Text(
-                          '注册',
-                          style: TextStyle(
-                            fontSize: 16, 
-                            fontWeight: FontWeight.w500,
-                            fontFamily: 'NotoSansSC', // 使用Noto Sans SC字体
+                          label: Text(
+                            '注册',
+                            style: TextStyle(
+                              fontSize: 16, 
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'NotoSansSC', // 使用Noto Sans SC字体
+                            ),
                           ),
                         ),
                       ),
@@ -678,29 +747,31 @@ class _ArticleFeedState extends State<ArticleFeed> {
             }
           ),
           const SizedBox(height: 16),
-          SizedBox(
-            width: 200,
-            child: ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  _articlesFuture = ArticleService.getArticles();
-                });
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.primary,
-                foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                elevation: 0, // 移除阴影
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12), // MD3推荐的圆角
+          Center(
+            child: SizedBox(
+              width: 200, // 固定宽度以符合设计规范
+              child: ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _articlesFuture = ArticleService.getArticles();
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                  elevation: 0, // 移除阴影
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12), // MD3推荐的圆角
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 16), // 增加按钮高度
                 ),
-                padding: const EdgeInsets.symmetric(vertical: 16), // 增加按钮高度
-              ),
-              child: Text(
-                '重试',
-                style: TextStyle(
-                  fontSize: 16, 
-                  fontWeight: FontWeight.w500,
-                  fontFamily: 'NotoSansSC', // 使用Noto Sans SC字体
+                child: Text(
+                  '重试',
+                  style: TextStyle(
+                    fontSize: 16, 
+                    fontWeight: FontWeight.w500,
+                    fontFamily: 'NotoSansSC', // 使用Noto Sans SC字体
+                  ),
                 ),
               ),
             ),
